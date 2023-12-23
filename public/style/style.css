@@ -1,0 +1,107 @@
+/* global style */
+    /* Custom styles for the navbar */
+    nav.blue {
+        background-color: #3498db; /* Theme color */
+    }
+    nav.red {
+        background-color: #f35c4b; /* Theme color */
+    }
+
+    .navbar-brand {
+        color: #ffffff; /* Text color for the logo */
+    }
+    /*
+    .navbar-brand:hover {
+        color: #ffffff; 
+    }
+    
+
+    .navbar-nav .nav-link {
+        color: #ffffff; 
+    }
+    
+    .navbar-nav .nav-link:hover {
+        color: #000000; 
+        
+    }*/
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content {
+        flex: 1;
+    }
+    html, body {
+        height: 100%;
+    }
+    /* End Custom styles for the navbar */
+        
+    /* login form styles*/
+    #staffLogin {
+        display: none;
+    }
+    .card-header.blue {
+        background-color: #3498db;
+    }
+    .card-header.red {
+        background-color: #f35c4b;
+    }
+    
+    .btnlogin {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .btn.blue {
+        background-color: #3498db;
+        color: white;
+    }
+    .btn.red {
+        background-color: #f35c4b;
+        color: white;
+    }
+    /*
+    .card.login {
+        width: 400px;
+        margin: 20px auto;
+    }*/
+    .card-body {
+        transition: opacity 0.3s ease-in-out;
+    }
+    /*end login form styles*/
+
+    /* icon */
+    .input-group-text.blue {
+        background-color: #3498db;
+    }
+    .input-group-text.red {
+        background-color: #f35c4b;
+    }
+    i.fas.fa-user, 
+    i.fas.fa-lock, 
+    i.fas.fa-phone,
+    i.fas.fa-graduation-cap,
+    i.fas.fa-envelope {
+        color: white;
+    }
+    /* end icon */
+
+    #guestSearch.pc{
+        width: 400px;
+    }
+
+    button.navbar-toggler.navbar-dark:focus{
+        border: none;
+        outline: none;
+        color: white;
+    }
+    button.navbar-toggler.navbar-dark{
+        border: none;
+        outline: none;
+        color: white;
+    }
+    

@@ -1,0 +1,93 @@
+<!-- include header-->
+    <%- include('../include/header') %>
+    <style>
+        .text {
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<!-- end header-->
+<body>
+<!-- include navbar-->
+    <%- include('../guest/navbarguest') %>
+<!-- end navbar-->
+
+<main class="content">
+    <section>
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header blue text">
+                            STUDENT SIGN UP
+                        </div>
+                        <div class="card-body">
+                            <form action="/signup" method="post" id="signup-form" >
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="username" placeholder="Enter Username" name="username" autocomplete="on" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-envelope"></i></span>
+                                        </div>
+                                        <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" autocomplete="on" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentNumber">Student Number</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-graduation-cap"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" id="studentNumber" placeholder="Enter Student Number" name="studentNumber" autocomplete="on" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-phone"></i></span>
+                                        </div>
+                                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" name="phoneNumber" autocomplete="on" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-lock"></i></span>
+                                        </div>
+                                        <input type="password" class="form-control" id="password" placeholder="Enter Password" name="password"  required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text blue"><i class="fas fa-lock"></i></span>
+                                        </div>
+                                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name="password2"  required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn blue btnlogin">Sign Up</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- include footer-->
+    <%- include('../include/_footer') %>
+<!-- end footer-->

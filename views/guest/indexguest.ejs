@@ -1,0 +1,139 @@
+<!-- include header-->
+    <%- include('../include/header') %>
+</head>
+<!-- end header-->
+<body>
+<!-- include navbar-->
+    <%- include('../guest/navbarguest') %>
+<!-- end navbar-->
+
+<main class="content">
+    <section>
+        <div class="container py-4 text-center">
+            <img src="logo\logo_parcel-removebg.png" alt="" style="width: 150px; height: 150px;" class="logo">
+            <h3>Welcome to Parcel Management System</h3>
+            <p>Manage and collect your parcels with ease.</p>
+        </div>
+        <div class="container py-3 d-flex flex-column align-items-center text-center">
+            <h4>Search Your Parcel</h4>
+            <form class="form-inline mt-3" id="guestSearchForm" action="/guestSearch" method="post">
+                <div class="input-group mb-3">
+                    <input type="search" class="form-control" id="guestSearch" placeholder="Enter Tracking Number" name="guestSearch" >
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+<script>
+    $(document).ready(function () {
+        function checkViewport() {
+            if ($(window).width() > 768) {  // Adjust 768 to the width that determines PC view
+                $("#guestSearch").addClass("pc");
+            } else {
+                $("#guestSearch").removeClass("pc");
+            }
+        }
+
+        // Check on page load
+        checkViewport();
+
+        // Check on window resize
+        $(window).resize(checkViewport);
+        
+        $("#guestSearchForm").submit(function (e) {
+            const guestSearch = $('#guestSearch').val();
+            const tracking = guestSearch;
+
+            e.preventDefault();
+            $.ajax({
+                url: '/guestSearch',
+                method: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ guestSearch: guestSearch }),
+                success: function(data) {
+                    const searchresult = $('#searchresult').empty();
+                    const guestSearch = $('#guestSearch').val("");
+                    $("#guestresulttitle").remove();
+                    $(".container.mt-5.mb-5").remove();
+                    
+                    // Create the new div using jQuery and set its content
+                    const newDiv = $("<div>").addClass("container mt-5 mb-5")
+                                            .append($("<div>").addClass("list-group").attr("id", "searchresult"));
+
+                    // Insert the new div after the existing div using jQuery's .after() method
+                    $(".container.py-3.d-flex.flex-column.align-items-center.text-center").after(newDiv);
+
+                    $("#searchresult").before('<h5 id="guestresulttitle"></h5>');
+                    $("#guestresulttitle").text(`${data.filter.length} Parcel(s) Found With The Tracking Number "${tracking}"`);
+                    
+
+                    // Assuming data.filter is an array of items
+                    $.each(data.filter, function(index, item) {
+                        const linkToResult = $('<div>', {
+                            id: 'linktoresult' + index, // Ensure each link has a unique ID
+                            class: 'list-group-item list-group-item-action',
+                            href: '/login',
+                        }).appendTo('#searchresult');
+
+                        $('<div>', {
+                            class: 'd-flex w-100 justify-content-between',
+                            id: "resultcontainer" + index, // Ensure each container has a unique ID
+                        }).appendTo(linkToResult);
+
+                        $('<h5>', {
+                            class: 'mb-1',
+                            text: item.tracking,
+                        }).appendTo("#resultcontainer" + index);
+
+                        $('<small>', {
+                            text: item.dateAdded,
+                        }).appendTo("#resultcontainer" + index);
+
+                        $('<p>', {
+                            class: "mb-1 parcel",
+                            html: `${item.name}<br>${item.parcelWeight}Kg<br>RM${item.price}`, // Use html property to insert line breaks
+                        }).appendTo(linkToResult);
+                    });
+                },
+                error: function(error) {
+                    const guestSearch = $('#guestSearch').val("");
+                    const searchresult = $('#searchresult').empty();
+                    $("#guestresulttitle").remove();
+                    $(".container.mt-5.mb-5").remove();
+                    const newDiv = $("<div>").addClass("container mt-5 mb-5")
+                                            .append($("<div>").addClass("list-group").attr("id", "searchresult"));
+
+                    // Insert the new div after the existing div using jQuery's .after() method
+                    $(".container.py-3.d-flex.flex-column.align-items-center.text-center").after(newDiv);
+
+
+                    // Parse the error response to get the error message
+                    const errorMessage = JSON.parse(error.responseText).error;
+
+                    let alertClass = 'alert alert-danger'; // Default to danger
+
+                    // Conditionally set the alert class based on the HTTP status code
+                    if (error.status === 404) {
+                        alertClass = 'alert alert-warning py-3';
+                    } else if (error.status === 500 || 400) {
+                        alertClass = 'alert alert-danger py-3';
+                    }
+
+                    $('<div>', {
+                        class: alertClass,
+                        role: 'alert',
+                        text: errorMessage,
+                    }).appendTo('#searchresult');
+                }
+
+            });
+        });  
+    });
+</script>
+<!-- include footer-->
+    <%- include('../include/_footer') %>
+<!-- end footer-->

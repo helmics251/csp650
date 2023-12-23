@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Management System</title>
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="/style/style.css" />
+    <script>
+        $(document).ready(function () {
+            var path = window.location.pathname;
+
+            // Find the anchor element with href matching the current path
+            var $matchedLink = $(`[href="${path}"]`);
+
+            // If the matched anchor element is found, add CSS styles to its closest .nav-link parent
+            if ($matchedLink.length > 0) {
+                $matchedLink.closest(".nav-link.guestnavbar").css({
+                    "color": "#FFFFFF",
+                    "font-weight": "bold"
+                });
+            }
+            
+            function checkViewport() {
+                if ($(window).width() > 768) {  // Adjust 768 to the width that determines PC view     
+                    $("#guestnavbar .navbar-brand span").replaceWith(function() {
+                        return $("<h2>").html($(this).html());
+                    });
+                } else {
+                    $("#guestnavbar .navbar-brand h2").replaceWith(function() {
+                        return $("<span>").html($(this).html());
+                    });
+                }
+            }
+
+            // Check on page load
+            checkViewport();
+
+            // Check on window resize
+            $(window).resize(checkViewport);
+            $('#guestnavbarhome, #guestnavbarsignup, #guestnavbarlogin').each(function() {
+                $(this).data('original-bold', $(this).css('font-weight'));
+                //console.log($(this).data('original-bold'));
+            });
+            $('#guestnavbarhome, #guestnavbarsignup, #guestnavbarlogin').hover(
+                // On mouse enter
+                function() {
+                    
+                    if ($(this).data('original-bold') !== '700') {
+                        $(this).data('original-color', $(this).css('color'));
+                        $(this).css('color', '#000000');
+                    }
+
+                },
+                // On mouse leave
+                function() {
+                    if ($(this).data('original-bold') !== 'bold') {
+                        $(this).css('color', $(this).data('original-color'));
+                    }
+                }
+            );
+        });
+    </script>
