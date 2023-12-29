@@ -6,6 +6,11 @@
 <!-- include navbar-->
     <%- include('../guest/navbarguest') %>
 <!-- end navbar-->
+<% if ( messages.alert ){ %>
+    <script>
+        alert("<%= messages.alert %>");
+    </script>
+<% } %>
 <main class="content">
     <section>
         <div class="container mt-5">
@@ -29,7 +34,7 @@
                                     <label for="studentusername">Username</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend ">
-                                            <span class="input-group-text blue"><i class="fas fa-user"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-user text-white"></i></span>
                                         </div>
                                         <input type="text" class="form-control" autocomplete="on" id="studentusername" name="username" placeholder="Enter username" required>
                                     </div>
@@ -38,7 +43,7 @@
                                     <label for="studentpassword">Password</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend ">
-                                            <span class="input-group-text blue"><i class="fas fa-lock"></i></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></i></span>
                                         </div>
                                         <input type="password" class="form-control" id="studentpassword" name="password" placeholder="Enter password" required>
                                     </div>
@@ -51,7 +56,7 @@
                                     <label for="staffusername">Username</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text red"><i class="fas fa-user"></i></span>
+                                            <span class="input-group-text red"><i class="fas fa-user text-white"></i></span>
                                         </div>
                                         <input type="text" class="form-control" autocomplete="on" id="staffusername" name="username" placeholder="Enter username" required>
                                     </div>
@@ -60,7 +65,7 @@
                                     <label for="staffpassword">Password</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text red"><i class="fas fa-lock"></i></i></span>
+                                            <span class="input-group-text red"><i class="fas fa-lock text-white"></i></i></span>
                                         </div>
                                         <input type="password" class="form-control" id="staffpassword" name="password" placeholder="Enter password" required>
                                     </div>

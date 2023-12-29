@@ -15,7 +15,13 @@ router.get("/", async (req, res) => {
     }
     const staffid = req.session.staff.staffId;
     const staffList = await Staff.findOne({ staffId: staffid });
-    return res.render("staff/indexstaff", { staffData: staffList });
+
+    if (staffList.pricing && staffList.pricing.length > 0) {
+      const lockerData = staffList.locker;
+      
+      return res.render("staff/indexstaff", { staffData: staffList, lockerData: lockerData.length });
+    }
+    return res.redirect("/staffsetting");
   } else if (req.session.user) {
     const username = req.session.user.username;
     const userList = await User.findOne({ username: username });

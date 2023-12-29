@@ -13,9 +13,9 @@ router.post(
   async function (req, res) {
     const staffid = req.session.staff.staffId;
 
-    var currentpassword = req.body.currentpassword;
-    var newpassword = req.body.newpassword;
-    var confirmnewpassword = req.body.confirmnewpassword;
+    const currentpassword = req.body.currentpassword;
+    const newpassword = req.body.newpassword;
+    const confirmnewpassword = req.body.confirmnewpassword;
 
     const staff = await Staff.findOne({ staffId: staffid });
 

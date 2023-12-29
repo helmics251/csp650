@@ -8,30 +8,32 @@ const { db } = require("../../middleware/setupdb");
 
 router.post("/", async function (req, res) {
   // get multipart user input
-  var studentNumber = req.body.studentNumber;
-  var editusername = req.body.editusername;
-  var editemail = req.body.editemail;
-  var phoneNumber = req.body.phoneNumber;
+  const studentNumber = req.body.studentNumber;
+  // const editusername = req.body.editusername;
+  const editemail = req.body.editemail;
+  // console.log(editemail);
+  // const phoneNumber = req.body.phoneNumber;
 
   // create an object with only non-empty fields
-  var updateUser = {};
-  if (editusername !== "") {
-    updateUser.username = editusername;
-  }
+  let updateUser = {};
+  // if (editusername !== "") {
+  //   updateUser.username = editusername;
+  // }
   if (editemail !== "") {
     updateUser.email = editemail;
   }
-  if (phoneNumber !== "") {
-    updateUser.phoneNumber = phoneNumber;
-  }
+  // if (phoneNumber !== "") {
+  //   updateUser.phoneNumber = phoneNumber;
+  // }
 
   // Check if updateUser has any properties before updating
   if (Object.keys(updateUser).length > 0) {
-    await db
+    const result = await db
       .collection("users")
       .updateOne({ studentNumber: studentNumber }, { $set: updateUser });
 
-    console.log("\nUser Updated\n" + JSON.stringify(updateUser));
+    // console.log("\nUser Updated\n" + JSON.stringify(updateUser));
+    console.log(result);
   } else {
     console.log("\nNo fields to update\n");
   }

@@ -59,10 +59,8 @@ router.post("/", async (req, res) => {
       }
     );
 
-    // Check if the user with the specified studentNumber exists
     const existingUser = await User.findOne({ "Parcel.parcelID": parcelID });
     if (existingUser) {
-      // Update the user document to add the new parcel to the Parcel array
       await User.updateOne(
         { "Parcel.parcelID": parcelID },
         {
@@ -73,7 +71,7 @@ router.post("/", async (req, res) => {
       );
       console.log("\nUser Parcel removed");
     }
-
+    console.log("parcel removed");
     res.json({ success: true });
   } catch (error) {
     console.error("Error:", error);

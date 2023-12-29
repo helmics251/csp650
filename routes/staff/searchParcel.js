@@ -19,17 +19,22 @@ router.post("/", async (req, res) => {
     }
 
     // Search for parcels and lockerName containing the searchTerm
-    const foundItems = [];
+    let foundItems = [];
 
     staff.locker.forEach((locker) => {
-      // Check if lockerName matches the search term
+      // Exclude terms with less than 4 alphanumeric characters or those containing special symbols
+      if (!/^[a-zA-Z0-9]{4,}$/.test(searchTerm) || /[^a-zA-Z0-9]/.test(searchTerm)) {
+        return;
+      }
+
+      // Check if lockerName contains the search term as a whole word
       if (new RegExp(searchTerm, "i").test(locker.lockerName)) {
         foundItems.push({
           lockerName: locker.lockerName,
           parcel: locker.parcel,
         });
       } else if (locker.parcel && typeof locker.parcel === "object") {
-        // Check if any parcel property matches the search term
+        // Check if any parcel property contains the search term as a whole word
         const parcelKeys = Object.keys(locker.parcel);
         if (
           parcelKeys.some((key) =>
@@ -44,17 +49,17 @@ router.post("/", async (req, res) => {
       }
     });
 
-    // Limit the search result to 3 items
-    const limitedItems = foundItems.slice(0, 3);
+
+    const limitedItems = foundItems.slice(0, 1);
 
     if (limitedItems.length === 0) {
       return res.status(404).json({ error: "No items found" });
     }
 
-    res.status(200).json({ foundItems: limitedItems });
+    return res.status(200).json({ foundItems: limitedItems });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

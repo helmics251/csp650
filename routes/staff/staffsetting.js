@@ -12,7 +12,7 @@ router.get(
   async function (req, res) {
     if (req.session.staff) {
       if (req.session.staff.isAdmin) {
-        return res.redirect("/manageStaff");
+        return res.render("guest/error404");
       }
       const staffList = await Staff.findOne({
         staffId: req.session.staff.staffId,
@@ -25,7 +25,7 @@ router.get(
         messages: messages,
       });
     } else {
-      return res.redirect("/");
+      return res.render("guest/error404");
     }
   }
 );

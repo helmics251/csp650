@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const moment = require("moment");
 const uuid = require("uuid");
 const flash = require("express-flash");
 router.use(flash());
@@ -9,39 +10,32 @@ const { db } = require("../../middleware/setupdb");
 
 router.get("/", async (req, res) => {
   if (req.session.staff) {
+    if (req.session.staff.isAdmin) {
+        return res.render("guest/error404");
+    }
     const staffList = await Staff.findOne({
       staffId: req.session.staff.staffId,
     });
-    const messages = req.flash();
 
-    res.render("staff/addparcel", { staffData: staffList, messages: messages });
+    if (staffList.pricing && staffList.pricing.length > 0) {
+      const messages = req.flash();
+      return res.render("staff/addparcel", { staffData: staffList, messages: messages });
+    }
+    return res.redirect("/staffsetting");
   }
+  return res.render("guest/error404");
 });
 
 router.post("/", async function (req, res) {
-  var name = req.body.name;
-  var phone = req.body.phone;
-  var selectedLocker = req.body.locker;
-  var parceltype = req.body.parceltype;
-  var tracking = req.body.tracking;
-  var studentNumber = req.body.studentNumber;
-  var parcelWeight = parseFloat(req.body.parcelWeight);
+  const name = req.body.name;
+  const phone = req.body.phone;
+  const selectedLocker = req.body.locker;
+  const parceltype = req.body.parceltype;
+  const tracking = req.body.tracking;
+  const studentNumber = req.body.studentNumber;
+  const parcelWeight = parseFloat(req.body.parcelWeight);
 
-  // Adjusted pricing logic
-
-  /*
-  var totalPrice = 0;
-
-  if (parcelWeight <= 1) {
-      totalPrice = 1;
-  } else if (parcelWeight <= 5) {
-      totalPrice = 2;
-  } else if (parcelWeight <= 10) {
-      totalPrice = 5;
-  } else {
-      totalPrice = 10;
-  }
-  */
+  // console.log(req.body);
 
   const staff = await Staff.findOne({ staffId: req.session.staff.staffId });
   const priceRange = staff.pricing;
@@ -86,20 +80,22 @@ router.post("/", async function (req, res) {
       `The price for a weight of ${parcelWeight}Kg is RM${totalPrice}.`
     );
 
-    var dateStr = new Date()
+    const dateStr = new Date()
       .toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" })
       .split(",")[0]
       .trim();
+    console.log(dateStr);
 
-    // Split the date string by "/"
-    var dateParts = dateStr.split("/");
+    // // Split the date string by "/"
+    // const dateParts = dateStr.split("/");
 
-    // Rearrange the parts to format the date as "yyyy-mm-dd"
-    var formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+    // // Rearrange the parts to format the date as "yyyy-mm-dd"
+    // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+    // const newformattedDate = moment(dateStr).format('DD/MM/YYYY');
 
-    var parcelID = uuid.v4();
+    const parcelID = uuid.v4();
 
-    var newparcel = {
+    const newparcel = {
       name: name,
       phone: phone,
       studentNumber: studentNumber,
@@ -107,7 +103,7 @@ router.post("/", async function (req, res) {
       parcelID: parcelID,
       parcelWeight: parcelWeight,
       tracking: tracking,
-      dateAdded: formattedDate,
+      dateAdded: dateStr,
       dateCollected: null,
       isCollected: false,
       price: totalPrice, // Add the calculated price to the parcel object
@@ -140,10 +136,10 @@ router.post("/", async function (req, res) {
           },
         }
       );
-      //console.log("\nParcel Added to user account\n", newparcel)
+      console.log("\nParcel Added to user account\n", newparcel)
     }
 
-    //console.log("\nParcel Added\n", newparcel)
+    console.log("\nParcel Added\n", newparcel)
 
     return res.redirect("/addparcel");
   } else {

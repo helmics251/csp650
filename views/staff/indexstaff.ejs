@@ -1,0 +1,127 @@
+<% if ( session.staff ){ %>
+<!-- include header -->
+    <%- include('../include/header') %>
+    <style>
+        .locker-box {
+            width: 100px;
+            height: 100px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            margin: 5px;
+            text-align: center;
+            font-size: 25px;
+            line-height: 65px;
+        }
+        .locker-box-full {
+            background-color: #FF5A5F; /* Vibrant red for full lockers */
+        }
+
+        .locker-box-empty {
+            background-color: #00B159; /* Bright green for empty lockers */
+        }
+
+        .locker-box-small {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<!-- end header -->
+<body>
+<!-- include navbar-->
+    <%- include('../staff/staffnavbar') %>
+<!-- end navbar-->
+<main class="content">
+    <section>
+        <div class="container mt-5 mb-5 text-center">
+            <h2>Locker Status</h2>
+            <div class="d-flex justify-content-center mt-4 mb-3">
+                <div class="d-flex align-items-center mr-5">
+                    <div class="locker-box-small locker-box-empty mr-1"></div>
+                    <span>Empty</span>
+                </div>
+                <div class="d-flex align-items-center ml-4">
+                    <div class="locker-box-small locker-box-full mr-1"></div>
+                    <span>Full</span>
+                </div>
+            </div>
+            <div class="row justify-content-center viewpc">
+                <% staffData.locker.forEach(function(locker, index) { %>
+                    <div class="locker-box col-2 mb-3 <%= locker.isEmpty ? 'locker-box-empty' : 'locker-box-full' %> text-center p-3">
+                        Locker <%= locker.lockerName %>
+                    </div>
+                    <% if ((index + 1) % 5 === 0) { %>
+                        </div>
+                        <div class="row justify-content-center viewpc">
+                    <% } %> 
+                <% }); %>
+            </div>
+            <div class="row justify-content-center viewmobile d-none">
+                <% staffData.locker.forEach(function(locker, index) { %>
+                    <div class="locker-box col-2 mb-3 <%= locker.isEmpty ? 'locker-box-empty' : 'locker-box-full' %> text-center p-3">
+                        <%= locker.lockerName %>
+                    </div>
+                    <% if ((index + 1) % 5 === 0) { %>
+                        </div>
+                        <div class="row justify-content-center viewmobile d-none">
+                    <% } %> 
+                <% }); %>
+            </div>
+            <div class="row justify-content-center viewsamsungfold d-none">
+                <% staffData.locker.forEach(function(locker, index) { %>
+                    <div class="locker-box col-3 mb-3 <%= locker.isEmpty ? 'locker-box-empty' : 'locker-box-full' %> text-center p-3">
+                        <%= locker.lockerName %>
+                    </div>
+                    <% if ((index + 1) % 3 === 0) { %>
+                        </div>
+                        <div class="row justify-content-center viewsamsungfold d-none">
+                    <% } %> 
+                <% }); %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    $(document).ready(function () {
+        $(".locker-box.locker-box-full").addClass("text-white");
+    });
+
+    $(document).ready(function () {
+        function checkViewport() {
+            if ($(window).width() > 768) {
+                // Adjust 768 to the width that determines PC view
+                // pc view
+
+                $("div.viewpc").removeClass("d-none");
+                $("div.viewmobile").addClass("d-none");
+                $("div.viewsamsungfold").addClass("d-none");
+            } else if ($(window).width() < 300 ) {
+                // samsung fold view
+                $("div.viewsamsungfold").removeClass("d-none");
+                $("div.viewmobile").addClass("d-none");
+                $("div.viewpc").addClass("d-none");
+            } else {
+                // mobile view
+                $("div.viewsamsungfold").addClass("d-none");
+                $("div.viewmobile").removeClass("d-none");
+                $("div.viewpc").addClass("d-none");
+            }
+        }
+
+        // Check on page load
+        checkViewport();
+
+        // Check on window resize
+        $(window).resize(checkViewport);
+    
+    });
+</script>
+
+<!-- include footer-->
+    <%- include('../include/_footer') %>
+<!-- end footer-->
+<% } else {%>
+  <h1>error</h1>
+<% } %>

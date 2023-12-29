@@ -8,17 +8,21 @@ const { db } = require("../../middleware/setupdb");
 
 router.get("/", async (req, res) => {
   if (req.session.staff) {
+    if (req.session.staff.isAdmin) {
+      return res.render("guest/error404");
+    }
     const staffList = await Staff.findOne(
       { staffId: req.session.staff.staffId },
       { locker: 1, _id: 0 }
     );
-    const pricing = await Staff.findOne({ staffId: req.session.staff.staffId });
+    const pricing = await Staff.findOne({staffId: req.session.staff.staffId});
 
-    //console.log("\nLocker List\n", staffList);
-    //console.log(staffList.locker.length);
-
-    res.render("staff/parcelList", { staffData: staffList, pricing: pricing });
+    if ( pricing.pricing && pricing.pricing.length > 0 ) {
+      return res.render("staff/parcelList", { staffData: staffList});
+    }
+    return res.redirect("/staffsetting");
   }
+  return res.render("guest/error404");
 });
 
 module.exports = router;

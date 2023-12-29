@@ -1,0 +1,492 @@
+<% if ( session.staff ){ %>
+<!-- include header -->
+  <%- include('../include/header') %>
+  <style>
+    .card-title {
+      font-weight: 400;
+    }
+    .list-group-item.list-group-item-action.active {
+      background-color: transparent; 
+      color: inherit; 
+      border: none; 
+    }
+
+    .list-group-item.list-group-item-action {
+      position: relative;
+      border: none;
+      transition: background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      display: flex; 
+      align-items: center; 
+    }
+
+    .list-group-item.list-group-item-action.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%; 
+      transform: translateY(-50%); 
+      width: 4px;
+      height: 35px; 
+      background-color: #f35c4b; 
+      transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    
+    .list-group-item.list-group-item-action:hover::before {
+      left: 6px; 
+    }
+    .custom-gradient {
+      border: none;
+      outline: none;
+    }
+
+    .custom-table th, .custom-table td {
+      border: none;
+    }
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.6rem;
+      padding-top: 0.6rem;
+      transition: background-color 0.3s;
+    }
+
+    
+    .detail-label {
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      color: #555;
+      display: flex;
+    }
+    .detail-value {
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      color: #555;
+      display: flex;
+    }
+
+    .detail-value {
+      color: #444;
+    }
+
+    .detail-item:hover {
+      background-color: #d4d4d4;
+      cursor: default;
+    }
+  </style>
+</head>
+<!-- end header -->
+<body>
+<!-- include navbar-->
+  <%- include('../staff/staffnavbar') %>
+<!-- end navbar-->
+<main class="content">
+<% if (messages.alert) { %>
+  <script>
+    alert("<%= messages.alert %>");
+  </script>
+<% } %>
+<div class="container mt-5 mb-5">
+  <!-- <h1 class="h3 mb-3 ml-2">Settings</h1> -->
+  <div class="row">
+    <div class="col-md-5 col-xl-4">
+
+      <div class="card sticky-top">
+        <div class="card-header red">
+          <h5 class="card-title mb-0 text-white">Staff Settings</h5>
+        </div>
+
+        <div class="list-group list-group-flush" role="tablist">
+          <a class="list-group-item list-group-item-action active" data-toggle="list" href="#pricing" role="tab">
+            Pricing
+          </a>
+          <a class="list-group-item list-group-item-action" data-toggle="list" href="#upload" role="tab">
+            Picture
+          </a>
+          <a class="list-group-item list-group-item-action" data-toggle="list" href="#general" role="tab">
+            General
+          </a>
+          <a class="list-group-item list-group-item-action" data-toggle="list" href="#locker" role="tab">
+            Locker
+          </a>
+          <a class="list-group-item list-group-item-action" data-toggle="list" href="#password" role="tab">
+            Password
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7 col-xl-8">
+      <% if ( staffData.pricing.length === 0 ){ %>
+        <div class="alert alert-primary">
+          <strong>Important!</strong>  To Gain Full Access To This System, Setup Your Pricing First.
+        </div>
+      <% } %>
+      <div class="tab-content">
+        <!-- upload setting -->
+        <div class="tab-pane fade" id="upload" role="tabpanel">
+
+        <div class="card">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">Upload Picture</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffUploadPicture" method="post" enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group mt-3">
+                    <label for="upload">Upload New Profile Picture:</label>
+                    <div class="input-group custom-file mb-3 mt-2">
+                      <input type="file" class="custom-file-input" id="upload-profile-picture" name="upload-profile-picture" accept="image/*">
+                      <label class="custom-file-label" for="upload-profile-picture">Choose Picture</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <img src="/upload/staff/<%= staffData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn red">Upload Picture</button>
+            </form>
+
+          </div>
+        </div>
+
+        
+
+        </div>
+        <!-- general setting -->
+        <div class="tab-pane fade" id="general" role="tabpanel">
+
+        <div class="card">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">General Settings</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffGeneralSetting" method="post">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group ">
+                    <label for="username" class="form-label">Username: </label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-user text-white"></i></span>
+                      </div>
+                      <input type="text" class="form-control " name="username" placeholder="New Username" id="username">
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    <label for="email" class="form-label">Email:</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-envelope text-white"></i></span>
+                      </div>
+                      <input type="email" class="form-control" id="email" placeholder="New Email" name="email">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <img src="/upload/staff/<%= staffData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn red mt-3">Save Changes</button>
+            </form>
+
+          </div>
+        </div>
+
+        
+
+        </div>
+        <!-- locker settings -->
+        <div class="tab-pane fade" id="locker" role="tabpanel">
+        <div class="card">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">Add More Locker</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffAddLocker" method="post">
+              <div class="row">
+                <div class="col-md-8">
+                  <p>Total Number of Current Lockers: <%= staffData.locker.length %></p>
+                  <div class="form-group ">
+                    <label for="newlockeramount">How Many Locker to add:</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-plus text-white"></i></span>
+                      </div>
+                      <input type="number" class="form-control" id="newlockeramount" name="newlockeramount" placeholder="Enter amount of locker">
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <img src="/upload/staff/<%= staffData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn red mt-3">Save Changes</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">Remove Locker</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffRemoveLocker" method="post">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group ">
+                    <label for="removeLocker">Select Locker To Remove:</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-trash-alt text-white"></i></span>
+                      </div>
+                      <select name="locker" id="removeLocker" class="form-control custom-select">
+                        <option value="" disabled selected hidden>Choose</option>
+                        <% let lockerGroups = {}; %> 
+              
+                        <% staffData.locker.forEach(function(locker) { %> 
+                          <% if (locker.isEmpty) { %> 
+                            <% const lockerName = locker.lockerName.charAt(0); %> 
+                              <% if (!lockerGroups[lockerName]) { %> 
+                                <% lockerGroups[lockerName] = true; %>
+                                <optgroup label="Locker <%= lockerName %>">
+                              <% } %>
+                            <option value="<%= locker.lockerName %>"><%= locker.lockerName %></option>
+                          <% } %> 
+                        <% }); %> 
+    
+                        <% Object.keys(lockerGroups).forEach(function(group) { %>
+                          </optgroup>
+                        <% }); %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn red mt-3">Remove Locker</button>
+            </form>
+          </div>
+        </div>
+        </div>
+        <!-- password setting -->
+        <div class="tab-pane fade" id="password" role="tabpanel">
+
+        <div class="card">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">Password Settings</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffPasswordSetting" method="post">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group ">
+                    <label for="current-password">Current Password:</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-lock text-white"></i></span>
+                      </div>
+                      <input type="password" class="form-control" id="currentpassword" placeholder="Enter your current password" name="currentpassword" required>
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    <label for="newpassword">New Password:</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-lock text-white"></i></span>
+                      </div>
+                      <input type="password" class="form-control" id="newpassword" placeholder="Enter your new password" name="newpassword" required>
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    <label for="confirmnewpassword">Confirm New Password:</label>
+                  <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-lock text-white"></i></span>
+                      </div>
+                      <input type="password" class="form-control" id="confirmnewpassword" placeholder="Confirm your new password" name="confirmnewpassword" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <img src="/upload/staff/<%= staffData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn red mt-3">Change Password</button>
+            </form>
+
+          </div>
+        </div>
+
+        
+
+        </div>
+        <!-- pricing setting -->
+        <div class="tab-pane fade show active" id="pricing" role="tabpanel">
+        <% if (staffData.pricing && staffData.pricing.length > 0) { %>
+          <div class="card">
+            <div class="card-header red">
+              <h5 class="card-title mb-0 text-white">Current Pricing</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <% 
+                      const sortedPricing = staffData.pricing.sort((a, b) => a.minWeight - b.minWeight);
+                      const maxValue = sortedPricing.length - 1;
+                      const minWeight = sortedPricing[0].minWeight;
+                      const maxWeight = sortedPricing[maxValue].minWeight;
+                  %>
+                  <div class="detail-item">
+                      <span class="detail-label">Minimum Weight</span>
+                      <span class="detail-value">Price</span>
+                  </div>
+                  <%
+                      sortedPricing.forEach((weight, index) => { 
+                  %>
+                  
+                  <% if (index === 0 && minWeight > 0) { %>
+                  <div class="detail-item">
+                      <span class="detail-label">Below <%= minWeight %> Kg:</span>
+                      <span class="detail-value">RM <%= sortedPricing[0].price %></span>
+                  </div>
+                  <% } %>
+
+                  <div class="detail-item">
+                      <span class="detail-label"><%= weight.minWeight %> Kg:</span>
+                      <span class="detail-value">RM <%= weight.price %></span>
+                  </div>
+
+                  <% if (index === maxValue && maxWeight > 0) { %>
+                  <div class="detail-item">
+                      <span class="detail-label"><%= maxWeight + 1 %> Kg and more:</span>
+                      <span class="detail-value">RM <%= sortedPricing[maxValue].price %></span>
+                  </div>
+                  <% } %>
+
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+        
+        <div class="card mt-4">
+          <div class="card-header red">
+            <h5 class="card-title mb-0 text-white">Add Price</h5>
+          </div>
+          <div class="card-body">
+            <form action="/staffSetupPricing" method="post">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group ">
+                    <label for="minWeight">Minimum Weight (Kg): </label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-weight-hanging text-white"></i></span>
+                      </div>
+                      <input type="number" class="form-control " id="minWeight" name="minWeight" placeholder="Enter Minimum Weight" step="0.1" min="0.1" required>
+                    </div>
+                  </div>
+                  <div class="form-group ">
+                    <label for="price">Price (RM): </label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text red"><i class="fas fa-dollar-sign text-white"></i></span>
+                      </div>
+                      <input type="number" name="price" id="price" class="form-control" placeholder="Enter Amount" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <img src="/upload/staff/<%= staffData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn red mt-3">Add Price</button>
+            </form>
+
+          </div>
+        </div>
+        <% if ( staffData.pricing && staffData.pricing.length > 0 ){ %>
+          <div class="card mt-4">
+            <div class="card-header red">
+              <h5 class="card-title mb-0 text-white">Remove Price</h5>
+            </div>
+            <div class="card-body">
+              <form action="/staffRemoveMinWeight" method="post">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="form-group ">
+                      <label for="removePrice">Select Min Weight To Remove:</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text red"><i class="fas fa-weight-hanging text-white"></i></span>
+                        </div>
+                        <select name="minWeight" id="minWeight" class="form-control custom-select">
+                          <option value="" disabled selected hidden>Choose</option>
+                          <% 
+                              staffData.pricing
+                                  .sort((a, b) => a.minWeight - b.minWeight) // Sort by minWeight in ascending order
+                                  .forEach(weight => { 
+                          %>
+                              <option value="<%= weight.minWeight %>"><%= weight.minWeight %> Kg</option>
+                          <% }); %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn red mt-3">Remove Price</button>
+              </form>
+
+            </div>
+          </div>
+        <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+$(document).ready(function () {
+  $("[href='/staffsetting']").addClass("active");
+});
+</script>
+<script>
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
+<!-- include footer-->
+  <%- include('../include/_footer') %>
+<!-- end footer-->
+<% } else {%>
+  <h1>error</h1>
+<% } %>

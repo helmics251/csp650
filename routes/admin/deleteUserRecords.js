@@ -9,7 +9,7 @@ const { db } = require("../../middleware/setupdb");
 router.post("/", async function (req, res) {
   try {
     // Get user input
-    var deletestudentNumber = req.body.deletestudentNumber;
+    const deletestudentNumber = req.body.deletestudentNumber;
 
     // Find the user data in the "users" collection
     const userData = await User.findOne({ studentNumber: deletestudentNumber });
