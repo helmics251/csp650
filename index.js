@@ -83,3 +83,9 @@ app.use("/deleteUserRecords", deleteUserRecordsRoute);
 
 //logout
 app.use("/logout", logoutRoute);
+
+
+// error 404
+app.get("*", function (req, res) {
+  res.status(404).render("guest/error404");
+});

@@ -12,7 +12,11 @@
 <!-- include navbar-->
     <%- include('../guest/navbarguest') %>
 <!-- end navbar-->
-
+<% if ( messages.alert ){ %>
+    <script>
+        alert("<%= messages.alert %>");
+    </script>
+<% } %>
 <main class="content">
     <section>
         <div class="container mt-5 mb-5">
@@ -20,15 +24,15 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header blue text">
-                            STUDENT SIGN UP
+                            <h3>Student Sign Up</h3>
                         </div>
                         <div class="card-body">
                             <form action="/signup" method="post" id="signup-form" >
                                 <div class="form-group">
-                                    <label for="username">Username</label>
+                                    <label for="username" class="form-label">Username</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-user"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-user text-white"></i></span>
                                         </div>
                                         <input type="text" class="form-control" id="username" placeholder="Enter Username" name="username" autocomplete="on" required>
                                     </div>
@@ -37,7 +41,7 @@
                                     <label for="email">Email</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-envelope"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-envelope text-white"></i></span>
                                         </div>
                                         <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" autocomplete="on" required>
                                     </div>
@@ -46,7 +50,7 @@
                                     <label for="studentNumber">Student Number</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-graduation-cap"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-graduation-cap text-white"></i></span>
                                         </div>
                                         <input type="number" class="form-control" id="studentNumber" placeholder="Enter Student Number" name="studentNumber" autocomplete="on" required>
                                     </div>
@@ -55,7 +59,7 @@
                                     <label for="phoneNumber">Phone Number</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-phone"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-phone text-white"></i></span>
                                         </div>
                                         <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" name="phoneNumber" autocomplete="on" required>
                                     </div>
@@ -64,7 +68,7 @@
                                     <label for="password">Password</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-lock"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></span>
                                         </div>
                                         <input type="password" class="form-control" id="password" placeholder="Enter Password" name="password"  required>
                                     </div>
@@ -73,7 +77,7 @@
                                     <label for="confirmPassword">Confirm Password</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text blue"><i class="fas fa-lock"></i></span>
+                                            <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></span>
                                         </div>
                                         <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name="password2"  required>
                                     </div>

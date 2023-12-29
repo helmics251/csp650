@@ -5,7 +5,7 @@ const mongoUrl = "mongodb://0.0.0.0:27017/parcels";
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoUrl);
 
-var db = mongoose.connection;
+let db = mongoose.connection;
 
 // check connection to db
 db.on("error", () => console.log("\nerror in connecting database"));

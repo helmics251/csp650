@@ -10,9 +10,13 @@ router.get(
   "/",
   express.urlencoded({ extended: true }),
   async function (req, res) {
-    const staffList = await Staff.find({ isAdmin: false });
+    if (req.session.staff && req.session.staff.isAdmin) {
+      const staffList = await Staff.find({ isAdmin: false });
 
-    res.render("admin/manageStaff", { staffData: staffList });
+      return res.render("admin/manageStaff", { staffData: staffList });
+
+    }
+    return res.render("guest/error404");
   }
 );
 

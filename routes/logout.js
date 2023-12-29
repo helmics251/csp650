@@ -10,4 +10,5 @@ router.get("/", function (req, res) {
   console.log("\nUser logged out");
 });
 
+
 module.exports = router;

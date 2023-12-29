@@ -1,4 +1,5 @@
 /* global style */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
     /* Custom styles for the navbar */
     nav.blue {
         background-color: #3498db; /* Theme color */
@@ -6,9 +7,16 @@
     nav.red {
         background-color: #f35c4b; /* Theme color */
     }
+    .red {
+        background-color: #f35c4b; /* Theme color */
+    }
 
     .navbar-brand {
         color: #ffffff; /* Text color for the logo */
+    }
+    .navbar-brand.logo{
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400;
     }
     /*
     .navbar-brand:hover {
@@ -29,12 +37,14 @@
         flex-direction: column;
     }
 
-    .content {
-        flex: 1;
+    main {
+      flex: 1;
+      font-family: 'Poppins', sans-serif;
     }
     html, body {
         height: 100%;
     }
+    
     /* End Custom styles for the navbar */
         
     /* login form styles*/
@@ -81,15 +91,11 @@
     .input-group-text.red {
         background-color: #f35c4b;
     }
-    i.fas.fa-user, 
-    i.fas.fa-lock, 
-    i.fas.fa-phone,
-    i.fas.fa-graduation-cap,
-    i.fas.fa-envelope {
-        color: white;
-    }
+    
+    
     /* end icon */
 
+    /* search bar guest */
     #guestSearch.pc{
         width: 400px;
     }
@@ -104,4 +110,19 @@
         outline: none;
         color: white;
     }
-    
+    /* end search bar guest */
+
+    /* admin */
+    .edit,
+    .delete,
+    .reset {
+        text-decoration: none;
+        position: relative;
+        display: inline-block;
+        transition: color 0.3s ease; /* Add transition for smooth color change on hover */
+    }
+    /* end admin */
+    .btn {
+      border: none;
+      cursor: pointer;
+    }

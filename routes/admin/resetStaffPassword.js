@@ -26,6 +26,8 @@ router.post("/", async function (req, res) {
     await db
       .collection("staffs")
       .updateOne({ staffId: StaffID }, { $set: { password: hashedPassword } });
+
+    // console log
     console.log(
       "\nPassword Resetted",
       "\nNew Password: " + generatedPassword,
@@ -60,7 +62,7 @@ function sendResetPasswordEmail(password, email, username) {
     from: "testparcel20@gmail.com", // Your Gmail email address
     to: email, // Recipient's email address
     subject: dynamicSubject,
-    text: `Your Password has been resetted\n\nPlease Change Your Password After Login.\n\nUsername: ${username}\nNew Password: ${password}\n`,
+    text: `Your Password has been changed\n\nPlease Change Your Password After Login.\n\nUsername: ${username}\nNew Password: ${password}\n`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

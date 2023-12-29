@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>404 - Page Not Found</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #000;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      .content {
+        animation: bounce 2s infinite;
+      }
+
+      .emoji {
+        font-size: 3rem;
+        animation: bounce 2s infinite;
+      }
+
+      h1 {
+        font-size: 6rem;
+        margin: 0;
+      }
+
+      p {
+        font-size: 1.5rem;
+      }
+
+      button {
+        background: #fff;
+        color: #000;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-top: 20px;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-20px);
+        }
+        60% {
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <div class="emoji">👀</div>
+        <h1>404</h1>
+        <p>Page Not Found</p>
+        <button onclick="goBack()">Go Back</button>
+      </div>
+    </div>
+    <script>
+      function goBack() {
+        window.location.href = "/";
+      }
+    </script>
+
+  </body>
+</html>

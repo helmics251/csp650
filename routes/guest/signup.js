@@ -12,7 +12,8 @@ router.get("/", function (req, res) {
   if (req.session.staff || req.session.user){
     return res.redirect("/");
   }
-  return res.render("guest/signup");
+  const messages = req.flash();
+  return res.render("guest/signup", {messages: messages});
 });
 
 router.post("/", async function (req, res) {
@@ -24,11 +25,25 @@ router.post("/", async function (req, res) {
   const pass = req.body.password;
   const pass2 = req.body.password2;
 
+  // check username
+  const isAdminUsername = /admin/i.test(user);
+  if (isAdminUsername) {
+    req.flash("alert", "Invalid Username.");
+    return res.redirect("/signup");
+  }
+
+  const checkexistinguser = await db.collection("users").findOne({studentNumber: studentNumber});
+  // console.log(checkexistinguser);
+
+  if (checkexistinguser) {
+    req.flash("alert", "User with this student number already exist");
+    return res.redirect("/signup")
+  }
+
   //check if passwords match
   if (pass != pass2) {
     req.flash("alert", "Passwords do not match");
-    res.redirect("/signup");
-    req.flash();
+    return res.redirect("/signup");
   } else {
     //hash the password
     const hashedPassword = await bcrypt.hash(pass, 10);

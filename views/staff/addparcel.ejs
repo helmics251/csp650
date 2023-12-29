@@ -1,0 +1,179 @@
+<% if ( session.staff ){ %>
+    <!-- include header -->
+        <%- include('../include/header') %>
+        <style>
+            /* Hide the default radio input */
+            input[type="radio"] {
+                display: none;
+            }
+
+            .radio-group {
+                display: flex;
+                gap: 10px; /* Gap between radio buttons */
+                /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+            }
+
+            /* Custom design for the radio button */
+            input[type="radio"] + label {
+                display: flex;
+                align-items: center;
+                padding: 8px 12px;
+                border: 2px solid #ccc;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+
+            /* Style for when radio is checked */
+            input[type="radio"]:checked + label {
+                background-color: #f35c4b; /* Changed color */
+                border-color: #f35c4b;    /* Changed color */
+                color: #fff;
+            }
+
+            /* Hide default focus styling for accessibility */
+            input[type="radio"]:focus + label {
+                outline: none;
+                box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+            }
+
+        </style>
+    </head>
+    <!-- end header -->
+    <body>
+    <!-- include navbar-->
+        <%- include('../staff/staffnavbar') %>
+    <!-- end navbar-->
+    <main class="content">
+        <section>
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header red text-center text-white">
+                                <h3 style="font-weight: 400;">Add Parcel</h3>
+                            </div>
+                            <div class="card-body">
+                                <form action="/addparcel" method="post" id="addparcel-form" >
+                                    <!-- name -->
+                                    <div class="form-group">
+                                        <label for="name" class="form-label ">Receiver Name: </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-user text-white"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control " name="name" placeholder="Receiver Name" id="name" autocomplete="on" required >
+                                        </div>
+                                    </div>
+
+                                    <!-- phone -->
+                                    <div class="form-group">
+                                        <label for="phone" class="form-label ">Receiver Phone: </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-phone text-white"></i></span>
+                                            </div>
+                                            <input type="tel" class="form-control " name="phone" placeholder="Receiver Phone" id="phone" autocomplete="on" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- student number -->
+                                    <div class="form-group">
+                                        <label for="studentNumber" class="form-label  " >Receiver Student Number:</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-graduation-cap text-white"></i></span>
+                                            </div>
+                                            <input type="number" class="form-control" id="studentNumber" placeholder="Receiver Student Number" name="studentNumber" autocomplete="on">
+                                        </div>
+                                    </div>
+
+                                    <!-- locker number -->
+                                    <div class="form-group">
+                                        <label for="locker" class="form-label" >Locker Number: </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-box text-white"></i></span>
+                                            </div>
+                                            <select name="locker" id="locker" class="form-control custom-select" required>
+                                              <option value="" disabled selected hidden>Choose</option>
+                                              <% let lockerGroups = {}; %> 
+              
+                                              <% staffData.locker.forEach(function(locker) { %> 
+                                                <% if (locker.isEmpty) { %> 
+                                                  <% const lockerName = locker.lockerName.charAt(0); %> 
+                                                    <% if (!lockerGroups[lockerName]) { %> 
+                                                      <% lockerGroups[lockerName] = true; %>
+                                                      <optgroup label="Locker <%= lockerName %>">
+                                                    <% } %>
+                                                  <option value="<%= locker.lockerName %>"><%= locker.lockerName %></option>
+                                                <% } %> 
+                                              <% }); %> 
+
+                                              <% Object.keys(lockerGroups).forEach(function(group) { %>
+                                                  </optgroup>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- parcel type -->
+                                    <div class="form-group">
+                                        <label for="parceltype" class="form-label ">Parcel Type:</label>
+                                        <div class="mb-1">
+                                            <div class="radio-group">
+                                                <input type="radio" class="form-control" id="fragile" name="parceltype" value="Fragile">
+                                                <label for="fragile" class="mr-3"><i class="fas fa-glass-martini mr-2"></i>Fragile</label>
+        
+                                                <input type="radio" class="form-control" id="nonfragile" name="parceltype" value="Non-Fragile">
+                                                <label for="nonfragile"><i class="fas fa-box mr-2"></i>Non-Fragile</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- parcel weight -->
+                                    <div class="form-group">
+                                        <label for="parcelWeight" class="form-label ">Parcel Weight (kg):</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-weight-hanging text-white"></i></span>
+                                            </div>
+                                            <input type="number" class="form-control " id="parcelWeight" name="parcelWeight" placeholder="Weight (kg)" step="0.1" min="0.1" autocomplete="on" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- tracking number -->
+                                    <div class="form-group">
+                                        <label for="tracking" class="form-label">Tracking Number: </label>
+                                        <div class="input-group mb-4">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text red"><i class="fas fa-qrcode text-white"></i></span>
+                                            </div>
+                                            <input type="text"  class="form-control " name="tracking" placeholder="Tracking Number" id="tracking" required>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn red btnlogin">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        $(document).ready(function() {
+            $('#studentNumber,#parcelWeight').on('keydown', function(event) {
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+    <!-- include footer-->
+        <%- include('../include/_footer') %>
+    <!-- end footer-->
+<% } else {%>
+    <h1>error</h1>
+<% } %>

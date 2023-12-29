@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const moment = require("moment");
 const flash = require("express-flash");
 router.use(flash());
 
@@ -12,16 +13,18 @@ router.post("/", async (req, res) => {
   const parcelID = req.body.parcelID;
   const lockerName = req.body.lockerName;
 
-  var dateStr = new Date()
+  const dateStr = new Date()
     .toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" })
     .split(",")[0]
     .trim();
+  console.log(dateStr);
 
-  // Split the date string by "/"
-  var dateParts = dateStr.split("/");
+  // // Split the date string by "/"
+  // const dateParts = dateStr.split("/");
 
-  // Rearrange the parts to format the date as "yyyy-mm-dd"
-  var formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+  // // Rearrange the parts to format the date as "yyyy-mm-dd"
+  // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+  // const newformattedDate = moment(dateStr).format('DD/MM/YYYY');
 
   await Staff.updateOne(
     {
@@ -31,7 +34,7 @@ router.post("/", async (req, res) => {
     {
       $set: {
         "locker.$.parcel.isCollected": true,
-        "locker.$.parcel.dateCollected": formattedDate,
+        "locker.$.parcel.dateCollected": dateStr,
       },
     }
   );

@@ -1,0 +1,377 @@
+<% if ( session.staff ){ %>
+<!-- include header-->
+    <%- include('../include/header') %>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rowsPerPage = 25;  // Example: 5 rows per page
+            const tableBody = document.querySelector("tbody");
+            const tableRows = Array.from(tableBody.querySelectorAll("tr"));
+
+            const totalPages = Math.ceil(tableRows.length / rowsPerPage);
+            const paginationContainer = document.querySelector(".pagination");
+
+            // Add Previous Button
+            let prevItem = document.createElement("li");
+            prevItem.classList.add("page-item");
+            let prevLink = document.createElement("a");
+            prevLink.classList.add("page-link");
+            prevLink.setAttribute("href", "#");
+            prevLink.setAttribute("data-page", "prev");
+            prevLink.innerText = "Previous";
+            prevItem.appendChild(prevLink);
+            paginationContainer.appendChild(prevItem);
+
+            // Add Numbered Page Links
+            for (let i = 1; i <= totalPages; i++) {
+                let pageItem = document.createElement("li");
+                pageItem.classList.add("page-item");
+                let pageLink = document.createElement("a");
+                pageLink.classList.add("page-link");
+                pageLink.setAttribute("href", "#");
+                pageLink.setAttribute("data-page", i.toString());
+                pageLink.innerText = i.toString();
+                pageItem.appendChild(pageLink);
+                paginationContainer.appendChild(pageItem);
+            }
+
+            // Add Next Button
+            let nextItem = document.createElement("li");
+            nextItem.classList.add("page-item");
+            let nextLink = document.createElement("a");
+            nextLink.classList.add("page-link");
+            nextLink.setAttribute("href", "#");
+            nextLink.setAttribute("data-page", "next");
+            nextLink.innerText = "Next";
+            nextItem.appendChild(nextLink);
+            paginationContainer.appendChild(nextItem);
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rowsPerPage = 25;
+            const tableBody = document.querySelector("tbody");
+            const tableRows = Array.from(tableBody.querySelectorAll("tr"));
+
+            let currentPage = 1;
+
+            function showPage(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                tableRows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+            }
+
+            function updatePaginationLinks() {
+                document.querySelectorAll(".pagination a").forEach(link => {
+                    $(link).closest(".page-item").removeClass("disabled active");
+                    $("[data-page='"+ currentPage +"']").closest(".page-item").addClass("active");
+                    // link.classList.remove("disabled");
+
+                    if (link.getAttribute("data-page") === "prev" && currentPage === 1) {
+                        // link.classList.add("disabled");
+                        $(link).closest(".page-item").addClass("disabled");
+                    } else if (link.getAttribute("data-page") === "next" && currentPage === Math.ceil(tableRows.length / rowsPerPage)) {
+                        // link.classList.add("disabled");
+                        $(link).closest(".page-item").addClass("disabled");
+                    }
+
+                });
+            }
+
+            showPage(currentPage);
+            updatePaginationLinks();
+
+            document.querySelectorAll(".pagination a").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+
+                    if (this.getAttribute("data-page") === "prev" && currentPage > 1) {
+                        currentPage--;
+                    } else if (this.getAttribute("data-page") === "next" && currentPage < Math.ceil(tableRows.length / rowsPerPage)) {
+                        currentPage++;
+                    } else {
+                        const page = parseInt(this.getAttribute("data-page"), 10);
+                        currentPage = page;
+                    }
+
+                    showPage(currentPage);
+                    updatePaginationLinks();
+                });
+            });
+        });
+    </script>
+
+</head>
+<!-- end header-->
+<body>
+
+<!-- include navbar-->
+    <%- include('../admin/adminnavbar') %>
+<!-- end navbar-->
+<main class="content">
+    <section>
+        <div class="container mt-5 mb-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Manage User</h2>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Student Number</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let counter = 1; %>
+                        <% userData.forEach(user => { %>
+                            <tr>
+                                <td> <%= counter %></td>
+                                <td> <%= user.username %></td>
+                                <td> <%= user.email %></td>
+                                <td> <%= user.phoneNumber %></td>
+                                <td> <%= user.studentNumber %></td>
+                                <td>
+                                        <!-- edit button -->
+                                        <button 
+                                            data-toggle="modal" 
+                                            data-pelajarnombor="<%= user.studentNumber %>"
+                                            data-username="<%= user.username %>"
+                                            data-email="<%= user.email %>"
+                                            data-target="#editModal" 
+                                            class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i> 
+                                            Edit
+                                        </button>
+                                        
+                                        <!-- reset password button -->
+                                        <button 
+                                            data-toggle="modal" 
+                                            data-pelajarnombor="<%= user.studentNumber %>"
+                                            data-username="<%= user.username %>"
+                                            data-email="<%= user.email %>"
+                                            data-target="#resetModal" 
+                                            class="btn btn-warning btn-sm">
+                                            <i class="fas fa-sync-alt"></i> 
+                                            Reset
+                                        </button>
+
+                                        <!-- delete button -->
+                                        <button 
+                                            data-toggle="modal" 
+                                            data-pelajarnombor="<%= user.studentNumber %>"
+                                            data-username="<%= user.username %>"
+                                            data-target="#deleteModal" 
+                                            class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i> 
+                                            Delete
+                                        </button>
+                                    </td>
+                            </tr>
+                            <% counter++ %>
+                        <% }) %>
+                    </tbody>
+                </table>    
+            </div>
+
+            <!-- Pagination Controls -->
+            <nav  aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <!-- Pagination Links will be dynamically added here -->
+                </ul>
+            </nav>
+        </div>
+        <!-- edit modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/editUser" method="post" class="modern-form">
+                            <div class="form-group">
+                                <label for="adminedituserstudentNumber">Student Number:</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend ">
+                                        <span class="input-group-text bg-dark"><i class="fas fa-graduation-cap text-white"></i></span>
+                                    </div>
+                                    <input type="text" id="adminedituserstudentNumber" name="studentNumber" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editemail">New Email:</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend ">
+                                        <span class="input-group-text bg-dark"><i class="fas fa-envelope text-white"></i></span>
+                                    </div>
+                                    <input type="email" id="editemail" name="editemail" class="form-control" placeholder="Enter New Email">
+                                </div>
+                            </div>
+                    </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn bg-dark text-white" id="adminEditUser">Save changes</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- reset modal -->
+        <div class="modal fade" id="resetModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/resetUserPassword" method="post" class="modern-form">
+                            <input type="hidden" id="RESETSTUDENTNUMBER" name="RESETSTUDENTNUMBER">
+                            <input type="hidden" id="resetusername" name="resetusername">
+                            <div class="form-group">
+                                <label for="resetemail">Email:</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend ">
+                                        <span class="input-group-text bg-dark"><i class="fas fa-envelope text-white"></i></span>
+                                    </div>
+                                    <input type="email" id="resetemail" name="resetemail" class="form-control" readonly>
+                                </div>
+                            </div>
+                    </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn bg-dark text-white" id="adminresetuser">Reset Password</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- delete modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span>Are you sure you want to delete these Records?</span>
+                        <p class="text-danger"><small>This action cannot be undone.</small></p>
+                        <form action="/deleteUserRecords" method="post" class="modern-form">
+                            <input type="hidden" id="enteredUsername" name="enteredUsername">
+                            <input type="hidden" id="deletestudentNumber" name="deletestudentNumber">
+
+                    </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger text-white" id="admindeleteuser">Delete</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<script>
+    $(document).ready(function () {
+        $("[href='/manageUser']").closest(".nav-item").addClass("active");
+    });
+
+    // fill in edit modal with value 
+    $('#editModal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget); // Button that triggered the modal
+        let studentNumber = button.data('pelajarnombor'); 
+        let username = button.data('username');
+        // console.log(studentNumber);
+
+        let modal = $(this);
+
+        // Update the modal content with the staffId
+        modal.find('#adminedituserstudentNumber').val(studentNumber);
+        modal.find(".modal-title").text("Change User '"+ username + "' Email");
+        
+    });
+
+    // fill in reset modal with value
+    $('#resetModal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget); // Button that triggered the modal
+        let studentNumber = button.data('pelajarnombor'); 
+        let username = button.data('username');
+        let email = button.data('email');
+
+        let modal = $(this);
+
+        // Update the modal content with the staffId
+        modal.find('#RESETSTUDENTNUMBER').val(studentNumber);
+        modal.find('#resetusername').val(username);
+        modal.find('#resetemail').val(email);
+        modal.find(".modal-title").text("Reset User '"+ username + "' Password"); 
+    });
+
+    // fill in delete modal with value
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget); // Button that triggered the modal
+        let studentNumber = button.data('pelajarnombor'); 
+        let username = button.data('username');
+
+        let modal = $(this);
+
+        // Update the modal content with the staffId
+        modal.find('#deletestudentNumber').val(studentNumber);
+        modal.find('#enteredUsername').val(username);
+        modal.find(".modal-title").text("Delete All Record For: " + username); 
+    });
+
+    // confirmation for delete
+    $(document).ready(function() {
+        $("#deletestudentNumber").closest("form").submit(function(e) { // Attach a submit event listener to the form
+            let isConfirmed = confirm("Are you sure you want to delete these Records?"); // Initial confirmation alert
+
+            if (isConfirmed) { // If user confirms the action
+                let correctUsername = $("#enteredUsername").val();
+
+                let enteredUsername = prompt("Please enter your username "+`"${correctUsername}"`+" to confirm:"); // Prompt for username
+                
+                if (enteredUsername !== correctUsername) { // If entered username doesn't match
+                    alert("Invalid username! Submission aborted."); // Show an error alert
+                    e.preventDefault(); // Prevent the form from submitting
+                }
+            } else {
+                e.preventDefault(); // Prevent the form from submitting if initial confirmation is cancelled
+            }
+        });
+    });
+</script>
+<!-- include footer-->
+    <%- include('../include/_footer') %>
+<!-- end footer-->
+<% } else {%>
+    <h1>error</h1>
+<% } %>

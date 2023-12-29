@@ -9,19 +9,29 @@ const { db } = require("../../middleware/setupdb");
 
 router.get("/", async (req, res) => {
   if (req.session.staff) {
+    if (req.session.staff.isAdmin) {
+      return res.render("guest/error404");
+    }
     const staffList = await Staff.findOne({
       staffId: req.session.staff.staffId,
     });
-    const messages = req.flash();
 
-    res.render("staff/report", { staffData: staffList, messages: messages });
+    if (staffList.pricing && staffList.pricing.length > 0) {
+      const messages = req.flash();
+
+      return res.render("staff/report", { staffData: staffList, messages: messages });
+    }
+    return res.redirect("/staffsetting");
   }
+  return res.render("guest/error404");
 });
 
 router.post("/", async (req, res) => {
   try {
     const reportDate = req.body.reportDate;
+    console.log("orginal date: " + reportDate);
     const formattedDate = moment(reportDate).format("DD MMM YYYY");
+    const newformattedDate = moment(reportDate).format("DD/MM/YYYY");
     //console.log(formattedDate);
 
     let staff = await db
@@ -35,13 +45,13 @@ router.post("/", async (req, res) => {
 
     // Filter collected parcels with the specified reportDate
     const foundCollectedParcels = staff.collectedParcel.filter(
-      (parcel) => parcel.dateCollected === reportDate
+      (parcel) => parcel.dateCollected === newformattedDate
     );
     const addedParcelFromLocker = staff.locker
-      .filter((locker) => locker.parcel?.dateAdded === reportDate)
+      .filter((locker) => locker.parcel?.dateAdded === newformattedDate)
       .map((locker) => locker.parcel);
     const addedParcelFromCollectedParcel = staff.collectedParcel.filter(
-      (parcel) => parcel.dateAdded === reportDate
+      (parcel) => parcel.dateAdded === newformattedDate
     );
 
     if (addedParcelFromLocker.length > 0) {

@@ -8,14 +8,15 @@ const { db } = require("../../middleware/setupdb");
 
 router.post("/", async function (req, res) {
   const staffid = req.session.staff.staffId;
-  var parcelID = req.body.parcelID;
-  var currentLocker = req.body.currentLocker;
-  var selectedLocker = req.body.locker; // changed variable name for clarity
-  var name = req.body.name;
-  var phone = req.body.phone.toString();
-  var parceltype = req.body.parceltype;
+  const parcelID = req.body.parcelID;
+  const currentLocker = req.body.currentLocker;
+  const selectedLocker = req.body.locker; // changed variable name for clarity
+  const name = req.body.name;
+  const phone = req.body.phone.toString();
+  const parceltype = req.body.parceltype;
+  const parcelWeight =req.body.parcelWeight;
 
-  var updateParcel = {};
+  let updateParcel = {};
 
   if (name) {
     updateParcel.name = name;
@@ -26,11 +27,57 @@ router.post("/", async function (req, res) {
   if (parceltype) {
     updateParcel.parceltype = parceltype;
   }
+  if (parcelWeight) {
+    const staff = await Staff.findOne({ staffId: staffid });
+    const priceRange = staff.pricing;
+    const sortedPriceRange = priceRange.sort((a, b) => a.minWeight - b.minWeight);
+    let priceRanges = [];
+    for (let i = 0; i < sortedPriceRange.length; i++) {
+      const current = sortedPriceRange[i];
+      const next = sortedPriceRange[i + 1];
+
+      const maxWeight = next ? next.minWeight - 1 : Infinity;
+
+      priceRanges.push({
+        minWeight: current.minWeight,
+        maxWeight: maxWeight,
+        price: current.price,
+      });
+    }
+    function getPriceForWeight(parcelWeight, priceRanges) {
+      for (const range of priceRanges) {
+        if (parcelWeight < priceRanges[0].minWeight) {
+          return priceRanges[0].price;
+        }
+
+        if (parcelWeight >= range.minWeight && parcelWeight <= range.maxWeight) {
+          return range.price;
+        }
+      }
+      return null; // Return null if weight doesn't fall within any defined range
+    }
+    const totalPrice = getPriceForWeight(parcelWeight, priceRanges);
+    if (totalPrice !== null) {
+      console.log(
+        `The price for a weight of ${parcelWeight}Kg is RM${totalPrice}.`
+      );
+
+      updateParcel.parcelWeight = parcelWeight;
+      updateParcel.price = totalPrice;
+    } else {
+      console.log(`No price defined for a weight of ${parcelWeight}Kg.`);
+      req.flash(
+        "alert",
+        `Error Editing Parcel weight, the price for ${parcelWeight}Kg do not exist, please check pricing setup in setting`
+      );
+      return res.redirect("/staffsetting");
+    }
+  }
 
   // Find the current locker and get the entire parcel information
   const currentLockerInfo = await Staff.findOne(
     {
-      staffId: req.session.staff.staffId,
+      staffId: staffid,
       "locker.lockerName": currentLocker,
     },
     { "locker.$": 1 }
@@ -81,7 +128,7 @@ router.post("/", async function (req, res) {
     // Update parcel in the current locker
     await Staff.updateOne(
       {
-        staffId: req.session.staff.staffId,
+        staffId: staffid,
         "locker.lockerName": currentLocker,
       },
       {

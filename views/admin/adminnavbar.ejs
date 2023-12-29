@@ -1,0 +1,26 @@
+
+<nav class="navbar bg-dark navbar-expand-lg navbar-dark" id="guestnavbar">
+    <a class="navbar-brand logo" href="/"><h2>Parcel Management</h2></a>
+    <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link " href="/manageStaff">Manage Staff</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link "  href="/manageUser">Manage User</a>
+            </li>
+            <li class="nav-item dropdown ">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= session.staff.username %>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="logout">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+

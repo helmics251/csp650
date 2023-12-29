@@ -11,7 +11,8 @@ router.get("/", function (req, res) {
   if (req.session.staff || req.session.user){
     return res.redirect("/");
   }
-  return res.render("guest/login");
+  const messages = req.flash();
+  return res.render("guest/login", {messages: messages});
 });
 
 router.post(
@@ -41,14 +42,12 @@ router.post(
       } else {
         console.log("\nIncorrect password");
         req.flash("alert", "Incorrect password");
-        res.render("login");
-        req.flash();
+        return res.redirect("/login");
       }
     } else {
       console.log("\nUser not found");
       req.flash("alert", "User not found");
-      res.render("login");
-      req.flash();
+      return res.redirect("/login");
     }
   }
 );
@@ -88,14 +87,12 @@ router.post(
       } else {
         console.log("\nIncorrect password");
         req.flash("alert", "Incorrect password");
-        res.render("login");
-        req.flash();
+        return res.redirect("/login");
       }
     } else {
       console.log("\nUser not found");
       req.flash("alert", "User not found");
-      res.render("login");
-      req.flash();
+      return res.redirect("/login");
     }
   }
 );

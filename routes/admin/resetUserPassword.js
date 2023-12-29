@@ -67,7 +67,7 @@ function sendResetUserPasswordEmail(password, email, username) {
     from: "testparcel20@gmail.com", // Your Gmail email address
     to: email, // Recipient's email address
     subject: dynamicSubject,
-    text: `Your Password has been resetted\n\nPlease Change Your Password After Login.\n\nUsername: ${username}\nNew Password: ${password}\n`,
+    text: `Your Password has been changed\n\nPlease Change Your Password After Login.\n\nUsername: ${username}\nNew Password: ${password}\n`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
