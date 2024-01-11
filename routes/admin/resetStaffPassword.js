@@ -3,6 +3,7 @@ const router = express.Router();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const flash = require("express-flash");
+require("dotenv").config();
 router.use(flash());
 
 const { User, Staff } = require("../../middleware/schemamodel");
@@ -53,16 +54,16 @@ function sendResetPasswordEmail(password, email, username) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "testparcel20@gmail.com", // Your Gmail email address
-      pass: "beeg irpk xkim afiq", // Your Gmail password or App Password
+      user: process.env.GMAIL_USER, // Your Gmail email address
+      pass: process.env.GMAIL_PASS, // Your Gmail password or App Password
     },
   });
 
   const mailOptions = {
-    from: "testparcel20@gmail.com", // Your Gmail email address
+    from: process.env.DOMAIN_EMAIL, // Your Gmail email address
     to: email, // Recipient's email address
     subject: dynamicSubject,
-    text: `Your Password has been changed\n\nPlease Change Your Password After Login.\n\nUsername: ${username}\nNew Password: ${password}\n`,
+    text: `Dear ${username},\n\nYour password has been successfully reset for the Parcel Management System.\n\nPlease log in using the following credentials:\n\nUsername: ${username}\nNew Password: ${password}\n\nFor security reasons, we recommend changing your password after logging in.\n\nBest regards,\nThe Parcel Management System Team`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

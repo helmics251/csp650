@@ -8,8 +8,8 @@ const { db } = require("../../middleware/setupdb");
 
 router.post("/", async function (req, res) {
   //get multipart user input
-  var StaffId = req.body.StaffId;
-  var editEmail = req.body.editEmail;
+  const StaffId = req.body.StaffId;
+  const editEmail = req.body.editEmail;
 
   await db
     .collection("staffs")

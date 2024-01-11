@@ -3,29 +3,25 @@ const router = express.Router();
 const flash = require("express-flash");
 router.use(flash());
 
-const { storage, uploadstaff } = require("../../middleware/multer");
-//const { User, Staff } = require('../middleware/schemamodel');
+const { storage, uploadstudent } = require("../../middleware/multerstudent");
 
 const { db } = require("../../middleware/setupdb");
 
-router.post("/", uploadstaff.single("upload-profile-picture"), async (req, res) => {
-  const staffid = req.session.staff.staffId;
+router.post("/", uploadstudent.single("student-upload-profile-picture"), async (req, res) => {
+  const userid = req.session.user.userid;
   // Assuming the upload was successful, get the filename
   const filename = req.file.filename;
 
   await db
-    .collection("staffs")
+    .collection("users")
     .updateOne(
-      { staffId: staffid },
+      { userid: userid },
       { $set: { profilePictureName: filename } },
       { upsert: true }
     );
 
-  // Set the profilePictureUrl in the session
-  // req.session.profilePictureUrl = `/upload/staff/${filename}`;
-
   // Redirect to the staffsetting page after the upload
-  res.redirect("/staffsetting");
+  res.redirect("/studentsetting");
 });
 
 module.exports = router;

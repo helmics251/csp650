@@ -6,71 +6,72 @@ router.use(flash());
 const { User, Staff } = require("../../middleware/schemamodel");
 const { db } = require("../../middleware/setupdb");
 
+// Function to retrieve staff information
+const findStaff = async (staffid, lockerName) => {
+  return await Staff.findOne({
+    staffId: staffid,
+    "locker.lockerName": lockerName,
+  });
+};
+
+// Function to retrieve current parcel information
+const getCurrentParcelInfo = (staff, lockerName) => {
+  return staff.locker.find((locker) => locker.lockerName === lockerName).parcel;
+};
+
+// Function to remove parcel from staff
+const removeParcelFromStaff = async (staffid, currentParcelInfo) => {
+  await db.collection("staffs").updateOne(
+    { staffId: staffid },
+    { $push: { removedParcel: currentParcelInfo } }
+  );
+};
+
+// Function to empty a locker
+const emptyLocker = async (staffid, lockerName) => {
+  await Staff.updateOne(
+    {
+      staffId: staffid,
+      "locker.lockerName": lockerName,
+    },
+    {
+      $set: {
+        "locker.$.isEmpty": true,
+        "locker.$.parcel": null,
+      },
+    }
+  );
+};
+
+// Function to remove parcel from user
+const removeParcelFromUser = async (parcelID) => {
+  const existingUser = await User.findOne({ "Parcel.parcelID": parcelID });
+  if (existingUser) {
+    await User.updateOne(
+      { "Parcel.parcelID": parcelID },
+      {
+        $pull: {
+          Parcel: { parcelID: parcelID },
+        },
+      }
+    );
+    console.log("\nUser Parcel removed");
+  }
+};
+
 router.post("/", async (req, res) => {
   try {
     const staffid = req.session.staff.staffId;
     const parcelID = req.body.parcelID;
     const lockerName = req.body.lockerName;
 
-    // Find the staff and locker information
-    const staff = await Staff.findOne({
-      staffId: staffid,
-      "locker.lockerName": lockerName,
-    });
+    const staff = await findStaff(staffid, lockerName);
+    const currentParcelInfo = getCurrentParcelInfo(staff, lockerName);
 
-    // Retrieve the current parcel information
-    const currentParcelInfo = staff.locker.find(
-      (locker) => locker.lockerName === lockerName
-    ).parcel;
+    await removeParcelFromStaff(staffid, currentParcelInfo);
+    await emptyLocker(staffid, lockerName);
+    await removeParcelFromUser(parcelID);
 
-    // Move the current parcel to the "removedParcel" array
-    /*
-        await Staff.updateOne(
-            { staffId: staffid },
-            {
-                $push: {
-                    removedParcel: {
-                        $each: [currentParcelInfo],
-                        $position: 0, // Add the current parcel at the beginning
-                    },
-                },
-            }
-        );
-        */
-
-    await db
-      .collection("staffs")
-      .updateOne(
-        { staffId: staffid },
-        { $push: { removedParcel: currentParcelInfo } }
-      );
-
-    // Empty the current locker
-    await Staff.updateOne(
-      {
-        staffId: staffid,
-        "locker.lockerName": lockerName,
-      },
-      {
-        $set: {
-          "locker.$.isEmpty": true,
-          "locker.$.parcel": null,
-        },
-      }
-    );
-
-    const existingUser = await User.findOne({ "Parcel.parcelID": parcelID });
-    if (existingUser) {
-      await User.updateOne(
-        { "Parcel.parcelID": parcelID },
-        {
-          $pull: {
-            Parcel: { parcelID: parcelID },
-          },
-        }
-      );
-      console.log("\nUser Parcel removed");
-    }
     console.log("parcel removed");
     res.json({ success: true });
   } catch (error) {
@@ -78,5 +79,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
+
 
 module.exports = router;
