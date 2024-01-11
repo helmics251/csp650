@@ -15,13 +15,14 @@ const collectedParcelSchema = new mongoose.Schema({
   price: Number,
 });
 const userSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
-  username: String,
-  password: String,
-  email: String,
-  studentNumber: String,
-  phoneNumber: String,
-  Parcel: [collectedParcelSchema],
+    profilePictureName: String,
+    userid: String,
+    username: String,
+    password: String,
+    email: String,
+    studentNumber: String,
+    phoneNumber: String,
+    Parcel: [collectedParcelSchema],
 });
 const lockerSchema = new mongoose.Schema({
   lockerName: String,
@@ -37,7 +38,6 @@ const pricingSchema = new mongoose.Schema({
   price: Number,
 });
 const staffSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   profilePictureName: String,
   username: String,
   staffId: String,

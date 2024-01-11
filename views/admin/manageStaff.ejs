@@ -1,6 +1,12 @@
 <% if ( session.staff ){ %>
 <!-- include header-->
   <%- include('../include/header') %>
+  <title>Manage Staff</title>
+  <style>
+    th {
+        font-weight: 400;
+    }
+  </style>
   <script>
       document.addEventListener("DOMContentLoaded", function() {
           const rowsPerPage = 25;  // Example: 5 rows per page
@@ -117,6 +123,11 @@
 <!-- end navbar-->
 
 <main class="content">
+<% if (messages.alert) { %>
+  <script>
+    alert("<%= messages.alert %>");
+  </script>
+<% } %>
   <section>
     <!-- Table  -->
     <div class="container mt-5 mb-5 ">

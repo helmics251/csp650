@@ -17,14 +17,6 @@ router.post("/", async (req, res) => {
     .toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" })
     .split(",")[0]
     .trim();
-  console.log(dateStr);
-
-  // // Split the date string by "/"
-  // const dateParts = dateStr.split("/");
-
-  // // Rearrange the parts to format the date as "yyyy-mm-dd"
-  // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-  // const newformattedDate = moment(dateStr).format('DD/MM/YYYY');
 
   await Staff.updateOne(
     {

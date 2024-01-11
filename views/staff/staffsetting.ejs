@@ -1,6 +1,7 @@
 <% if ( session.staff ){ %>
 <!-- include header -->
   <%- include('../include/header') %>
+  <title>Settings</title>
   <style>
     .card-title {
       font-weight: 400;
@@ -31,8 +32,8 @@
       transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
     
-    .list-group-item.list-group-item-action:hover::before {
-      left: 6px; 
+    .list-group-item.list-group-item-action:hover {
+      background-color: #eeeeee; 
     }
     .custom-gradient {
       border: none;
@@ -70,7 +71,7 @@
       color: #444;
     }
 
-    .detail-item:hover {
+    .detail-item:hover:not(#minWeight_price_label) {
       background-color: #d4d4d4;
       cursor: default;
     }
@@ -355,7 +356,7 @@
                       const minWeight = sortedPricing[0].minWeight;
                       const maxWeight = sortedPricing[maxValue].minWeight;
                   %>
-                  <div class="detail-item">
+                  <div class="detail-item" id="minWeight_price_label">
                       <span class="detail-label">Minimum Weight</span>
                       <span class="detail-value">Price</span>
                   </div>

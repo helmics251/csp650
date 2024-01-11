@@ -1,6 +1,7 @@
 <% if ( session.staff ){ %>
 <!-- include header -->
   <%- include('../include/header') %>
+  <title>Parcel List</title>
   <style>
     .parcellist td {
       max-width: 11ch; /* Adjust this value as needed */
@@ -96,8 +97,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 0.6rem;
-        padding-top: 0.6rem;
+        padding-bottom: 0.4rem;
+        padding-top: 0.4rem;
         padding-left: 10px;
         padding-right: 10px;
         transition: background-color 0.3s;
@@ -205,25 +206,6 @@
                   <td>
                     <div class="row">
                       <div class="col">
-                        <!-- detail button
-                        <button 
-                          data-toggle="modal" 
-                          data-target="#detailmodal" 
-                          data-lockername="<%= locker.lockerName %>"
-                          data-trackingnum="<%= locker.parcel.tracking %>"
-                          data-receivername="<%= locker.parcel.name %>"
-                          data-phonenum="<%= locker.parcel.phone %>"
-                          data-parcelprice="<%= locker.parcel.price %>"
-                          data-studentnumberid="<%= locker.parcel.studentNumber %>"
-                          data-dateadded="<%= locker.parcel.dateAdded %>"
-                          data-parceltype="<%= locker.parcel.parceltype %>"
-                          data-parcelstatus="<%= locker.parcel.isCollected %>"
-                          data-parcelID="<%= locker.parcel.parcelID %>"
-                          class="btn list btn-block mb-2 btn-info btn-sm">
-                          <i class="fa-regular fa-eye mr-1"></i>
-                          Details
-                        </button> -->
-
                         <!-- edit button -->
                         <button 
                           data-toggle="modal" 
@@ -254,15 +236,6 @@
                           <i class="fas fa-check "></i> 
                           Collect
                         </button>
-
-                        <!-- delete button
-                        <button 
-                          data-toggle="modal" 
-                          data-target="#deleteModal" 
-                          class="btn list btn-block mb-2 btn-danger btn-sm">
-                          <i class="fas fa-trash-alt "></i> 
-                          Remove
-                        </button> -->
                       </div>
                     </div>
                   </td>

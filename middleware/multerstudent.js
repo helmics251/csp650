@@ -6,7 +6,7 @@ const path = require("path");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Specify the directory where you want to store the uploaded files
-    const uploadDir = "./public/upload/staff/";
+    const uploadDir = "./public/upload/student/";
     fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
@@ -18,9 +18,9 @@ const storage = multer.diskStorage({
 });
 
 // Set up multer middleware
-const uploadstaff = multer({ storage: storage });
+const uploadstudent = multer({ storage: storage });
 
 module.exports = {
   storage,
-  uploadstaff,
+  uploadstudent,
 };

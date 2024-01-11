@@ -1,0 +1,445 @@
+<% if ( session.staff ){ %>
+<!-- include header -->
+  <%- include('../include/header') %>
+  <title>Report</title>
+  <!-- Datepicker CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+  <!-- Datepicker JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+  <style>
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.4rem;
+        padding-top: 0.4rem;
+        padding-left: 10px;
+        padding-right: 10px;
+        transition: background-color 0.3s;
+    }
+
+    
+    .detail-label {
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: #555;
+        display: flex;
+        /* align-items: center; */
+    }
+    .detail-value {
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        color: #555;
+        display: flex;
+        /* align-items: center; */
+    }
+
+    .detail-label i {
+      margin-top: 4px;
+      margin-right: 8px;
+      color: #007bff;
+    }
+
+    .detail-value {
+        color: #444;
+    }
+
+    .detail-item:hover {
+        background-color: #d4d4d4;
+        cursor: default;
+    }
+    
+  </style>
+</head>
+<!-- end header -->
+<body>
+<!-- include navbar-->
+  <%- include('../staff/staffnavbar') %>
+<!-- end navbar-->
+<main class="content">
+<div class="container mb-5 mt-5">
+  <div class="row">
+    <div class="col" id="pagetitle">
+      <h2>Generate Report</h2>
+    </div>
+    <div class="col">
+      <div class="input-group date ml-auto" data-provide="datepicker" style="max-width: 200px;">
+        <form action="/report" method="post" id="reportForm">
+          <div class="input-group">
+            <input type="text" class="form-control ml-auto" name="reportDate" id="reportDate" placeholder="Choose Date" autocomplete="off">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-warning d-none notfound mt-3"></div>
+  <div class="row mt-4 d-none summaryrow">
+    <div class="col-md-4">
+      <div class="card sticky-top mb-3">
+        <div class="card-header red text-white">
+          <h5 class="card-title mb-0">Last 5 Days Chart</h5>
+        </div>
+        <div class="card-body">
+          <div class="container mb-2">
+            <canvas id="collectedParcelsChart"></canvas>
+          </div>
+          <div class="container mb-2">
+            <canvas id="addedParcelsChart"></canvas>
+          </div>
+          <div class="container">
+            <canvas id="profitChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header red text-white">
+          <h5 class="card-title mb-0 summarytable"></h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-bordered table-striped">
+              <tbody>
+                  <tr>
+                      <th scope="row">Collected Parcels</th>
+                      <td id="rowcollectedparcel"></td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Added Parcels</th>
+                      <td id="rowaddedparcel"></td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Profit</th>
+                      <td id="rowprofit"></td>
+                  </tr>
+                  
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card mt-5">
+        <div class="card-header red text-white">
+          <h5 class="card-title mb-0 collectedParcelsTable"></h5>
+        </div>
+        <div class="card-body">
+          <div class="pcview">
+            <table class="table table-bordered table-striped listCollectedParcels">
+              <thead>
+                <tr>
+                  <th>Tracking Number</th>
+                  <th>Receiver Name </th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+</div>
+
+
+<!-- parcel details modal -->
+  <div class="modal fade" id="detailmodal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title detail"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-user "></i> Name:</span>
+                  <span class="detail-value" id="detailreceiverName"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-phone-alt"></i> Phone:</span>
+                  <span class="detail-value" id="detailreceiverPhone"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-id-badge"></i> Student ID:</span>
+                  <span class="detail-value" id="detailreceiverStudentNumber"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-barcode"></i> Tracking Num:</span>
+                  <span class="detail-value" id="detailparcelTrackingNumber"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-calendar-alt"></i> Date Added:</span>
+                  <span class="detail-value" id="detaildateadded"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-calendar-alt"></i> Date Collected:</span>
+                  <span class="detail-value" id="detaildatecollected"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-box"></i>Parcel Type:</span>
+                  <span class="detail-value" id="detailparcelType"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-weight-hanging"></i>Parcel Weight:</span>
+                  <span class="detail-value" id="detailparcelWeight"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i class="fas fa-dollar-sign"></i> Price:</span>
+                  <span class="detail-value" id="detailprice"></span>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+$(document).ready(function () {
+  $("[href='/report']").addClass("active");
+  function checkViewport() {
+    if ($(window).width() > 768) {
+      // Adjust 768 to the width that determines PC view
+      $("div.pcview").removeClass("table-responsive");
+      $("#pagetitle span").replaceWith(function () {
+        return $("<h2>").html($(this).html());
+      });
+
+    } else {
+      $("div.pcview").addClass("table-responsive");
+      $("#pagetitle h2").replaceWith(function () {
+        return $("<span>").html($(this).html());
+      });
+    }
+  }
+
+  // Check on page load
+  checkViewport();
+
+  // Check on window resize
+  $(window).resize(checkViewport);
+  
+  $('#detailmodal').on('show.bs.modal', function (event) {
+      const anchor = $(event.relatedTarget); // Anchor that triggered the modal
+
+      // Extract data attributes from the clicked anchor
+      const lockerName = anchor.data('lockername');
+      const trackingNum = anchor.data('trackingnum');
+      const receiverName = anchor.data('receivername');
+      const phoneNum = anchor.data('phonenum');
+      const parcelPrice = anchor.data('parcelprice');
+      const studentNumberID = anchor.data('studentnumberid');
+      const dateAdded = anchor.data('dateadded');
+      const dateCollected = anchor.data('datecollected');
+      const parcelType = anchor.data('parceltype');
+      const parcelStatus = anchor.data('parcelstatus');
+      const parcelID = anchor.data('parcelid'); 
+      const beratParcel = anchor.data('beratparcel'); 
+
+      // Use the extracted data in your modal or any other logic
+      $("#detailreceiverName").text(receiverName);
+      $("#detailreceiverPhone").text(phoneNum);
+      $("#detailreceiverStudentNumber").text(studentNumberID);
+      $("#detailparcelLocation").text(lockerName); 
+      $("#detailparcelTrackingNumber").text(trackingNum);
+      $("#detaildateadded").text(dateAdded);
+      $("#detaildatecollected").text(dateCollected);
+      $("#detailparcelType").text(parcelType);
+      $("#detailparcelWeight").text(beratParcel+ " Kg"); 
+      $("#detailprice").text("RM"+parcelPrice);
+      $("h5.modal-title.detail").text("Parcel " + trackingNum + " Details");
+    });
+    
+});
+</script>
+<script>
+  $(document).ready(function(){
+      $('.input-group.date').datepicker({
+          format: 'dd/mm/yyyy',  
+          todayHighlight: true,  
+          autoclose: true        
+      }).on('changeDate', function() {
+        $('#reportForm').submit();
+    });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    let collectedParcelsChart, addedParcelsChart, profitChart;
+    $('#reportForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const reportDate = $('#reportDate').val();
+        const summarydate = moment(reportDate, "DD/MM/YYYY").format("D MMM YYYY");
+        $.ajax({
+            url: '/report',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ reportDate: reportDate }),
+            success: function(response) {
+                $("div.alert.alert-warning.notfound").addClass("d-none");
+                if (collectedParcelsChart) {
+                    collectedParcelsChart.destroy();
+                }
+                if (addedParcelsChart) {
+                    addedParcelsChart.destroy();
+                }
+                if (profitChart) {
+                    profitChart.destroy();
+                }
+                
+
+                // Extract the required data from the response
+                const results = response; // Assuming the response is already in the required format
+                
+
+                // Extract the dates, CollectedParcels, AddedParcel, and profitOfTheDay from the results
+                const summaryreportlist = results.find(item => item.date === moment(reportDate,"DD/MM/YYYY").format("DD/MM/YY"));
+                const dates = results.map(result => result.date);
+                const collectedParcels = results.map(result => result.foundCollectedParcels.length);
+                const addedParcel = results.map(result => result.foundAddedParcel.length);
+                const profitOfTheDay = results.map(result => result.profitOfTheDay);
+                
+                // Create and render the Collected Parcels chart
+                const collectedParcelsCtx = document.getElementById('collectedParcelsChart').getContext('2d');
+                collectedParcelsChart = new Chart(collectedParcelsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Collected Parcels',
+                            data: collectedParcels,
+                            backgroundColor: 'rgba(75, 192, 192)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Create and render the Added Parcels chart
+                const addedParcelsCtx = document.getElementById('addedParcelsChart').getContext('2d');
+                addedParcelsChart = new Chart(addedParcelsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Added Parcel',
+                            data: addedParcel,
+                            backgroundColor: 'rgba(255, 99, 132)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Create and render the Profit chart
+                const profitCtx = document.getElementById('profitChart').getContext('2d');
+                profitChart = new Chart(profitCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Profit of the Day (RM)',
+                            data: profitOfTheDay,
+                            backgroundColor: 'rgba(255, 205, 86)',
+                            borderColor: 'rgba(255, 205, 86, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                $(".summarytable").text(summarydate + " Summary Table");
+                $(".collectedParcelsTable").text("Collected Parcels List For " + summarydate);
+                $("#rowcollectedparcel").text(summaryreportlist.foundCollectedParcels.length + " Parcels");
+                $("#rowaddedparcel").text(summaryreportlist.foundAddedParcel.length + " Parcels");
+                $("#rowprofit").text("RM" + summaryreportlist.profitOfTheDay);
+
+                const listCollectedParcels = summaryreportlist.foundCollectedParcels;
+                const $tableBody = $('.listCollectedParcels tbody');
+                $tableBody.empty(); // Clear the table body
+
+                listCollectedParcels.forEach(parcel => {
+                    const $row = $('<tr>');
+                    
+                    const $link = $('<a>').attr({
+                        'href': '#',
+                        'data-toggle': 'modal',
+                        'data-target': '#detailmodal',
+                        'data-trackingnum': parcel.tracking,
+                        'data-receivername': parcel.name,
+                        'data-phonenum': parcel.phone,
+                        'data-parcelprice': parcel.price,
+                        'data-studentnumberid': parcel.studentNumber,
+                        'data-dateadded': parcel.dateAdded,
+                        'data-datecollected': parcel.dateCollected,
+                        'data-parceltype': parcel.parceltype,
+                        'data-parcelid': parcel.parcelID,
+                        'data-beratParcel': parcel.parcelWeight,
+                        'id': 'detailofparcel'
+                    }).text(parcel.tracking);
+
+                    // Append columns to the row using jQuery
+                    $row.append($('<td>').append($link));
+                    $row.append($('<td>').text(parcel.name));
+                    $row.append($('<td>').text("RM"+parcel.price));
+
+                    // Append the row to the table body
+                    $tableBody.append($row);
+                });
+
+
+                $(".summaryrow").removeClass("d-none");
+            },
+            error: function(error) {
+                $(".summaryrow").addClass("d-none");
+                const errorMessage ="<strong>Info!</strong> "+ JSON.parse(error.responseText).error;
+
+                $("div.alert.alert-warning.notfound").html(errorMessage);
+                $("div.alert.alert-warning.notfound").removeClass("d-none");
+            }
+        });
+    });
+});
+
+</script>
+<!-- include footer-->
+  <%- include('../include/_footer') %>
+<!-- end footer-->
+<% } else {%>
+  <h1>error</h1>
+<% } %>
