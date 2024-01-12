@@ -26,80 +26,79 @@ router.get("/", async (req, res) => {
   return res.render("guest/error404");
 });
 
+
+const findParcelsForDateRange = (staff,dates) => {
+  const results = [];
+
+  dates.reverse().forEach((date) => {
+    const formattedDate = moment(date, 'DD/MM/YYYY').format("DD/MM/YY");
+
+    const foundCollectedParcels = staff.collectedParcel.filter(
+      (parcel) => parcel.dateCollected === date
+    );
+    
+    const addedParcelFromLocker = staff.locker
+      .filter((locker) => locker.parcel?.dateAdded === date)
+      .map((locker) => locker.parcel);
+    const addedParcelFromCollectedParcel = staff.collectedParcel.filter(
+      (parcel) => parcel.dateAdded === date
+    );
+
+    const foundAddedParcel = [];
+    if (addedParcelFromLocker.length > 0) {
+      foundAddedParcel.push(...addedParcelFromLocker);
+    }
+    if (addedParcelFromCollectedParcel.length > 0) {
+      foundAddedParcel.push(...addedParcelFromCollectedParcel);
+    }
+
+    const profitOfTheDay = foundCollectedParcels.reduce(
+      (totalProfit, parcel) => totalProfit + (parcel.price || 0),
+      0
+    );
+
+    results.push({
+      date: formattedDate,
+      foundCollectedParcels,
+      foundAddedParcel,
+      profitOfTheDay
+    });
+  });
+
+
+
+  return results;
+};
+
 router.post("/", async (req, res) => {
   try {
     const reportDate = req.body.reportDate;
-    console.log("orginal date: " + reportDate);
-    const formattedDate = moment(reportDate).format("DD MMM YYYY");
-    const newformattedDate = moment(reportDate).format("DD/MM/YYYY");
-    //console.log(formattedDate);
+    console.log("original date: " + reportDate);
+    const parsedDate = moment(reportDate, 'DD/MM/YYYY');
 
-    let staff = await db
-      .collection("staffs")
-      .findOne({ staffId: req.session.staff.staffId });
-    const foundAddedParcel = [];
+    const yesterday = parsedDate.clone().subtract(1, 'days').format('DD/MM/YYYY');
+    const dayBeforeYesterday = parsedDate.clone().subtract(2, 'days').format('DD/MM/YYYY');
+    const dayBeforeBeforeYesterday = parsedDate.clone().subtract(3, 'days').format('DD/MM/YYYY');
+    const dayBeforeBeforeBeforeYesterday = parsedDate.clone().subtract(4, 'days').format('DD/MM/YYYY');
+
+    const staff = await db.collection("staffs").findOne({ staffId: req.session.staff.staffId });
 
     if (!staff) {
       return res.status(404).json({ error: "Staff not found" });
     }
 
-    // Filter collected parcels with the specified reportDate
-    const foundCollectedParcels = staff.collectedParcel.filter(
-      (parcel) => parcel.dateCollected === newformattedDate
-    );
-    const addedParcelFromLocker = staff.locker
-      .filter((locker) => locker.parcel?.dateAdded === newformattedDate)
-      .map((locker) => locker.parcel);
-    const addedParcelFromCollectedParcel = staff.collectedParcel.filter(
-      (parcel) => parcel.dateAdded === newformattedDate
-    );
+    const dates = [reportDate, yesterday, dayBeforeYesterday, dayBeforeBeforeYesterday, dayBeforeBeforeBeforeYesterday];
+    const results = findParcelsForDateRange(staff,dates);
 
-    if (addedParcelFromLocker.length > 0) {
-      foundAddedParcel.push(...addedParcelFromLocker);
-      //console.log("addedParcelFromLocker: " + JSON.stringify(addedParcelFromLocker) );
+    const foundCollectedParcelsForReportDate = results.find(result => result.date === moment(reportDate, 'DD/MM/YYYY').format("DD/MM/YY"))?.foundCollectedParcels || [];
+    if (foundCollectedParcelsForReportDate.length === 0) {
+      return res.status(404).json({ error: `No parcels found for the date ${moment(reportDate, 'DD/MM/YYYY').format("D MMM YYYY")}` });
     }
 
-    if (addedParcelFromCollectedParcel.length > 0) {
-      foundAddedParcel.push(...addedParcelFromCollectedParcel);
-      //console.log("addedParcelFromCollectedParcel: " + addedParcelFromCollectedParcel);
-    }
-
-    /*
-        foundAddedParcel.forEach((foundAddedParcel, index) => {
-            console.log(`foundAddedParcel[${index}]:`, foundAddedParcel);
-        });
-        */
-
-    // Error handling if no collected parcels or added parcels are found
-    if (foundCollectedParcels.length === 0 && foundAddedParcel.length === 0) {
-      //console.log("error Collected parcel: " + foundCollectedParcels);
-      //console.log("error Added parcel: " + foundAddedParcel);
-      return res
-        .status(404)
-        .json({ error: `No parcels found for the date ${formattedDate}` });
-    }
-
-    // Calculate profit of the day (sum of prices from collected parcels)
-    const profitOfTheDay = foundCollectedParcels.reduce(
-      (totalProfit, parcel) => {
-        return totalProfit + (parcel.price || 0); // assuming price is a property in collectedParcelSchema
-      },
-      0
-    );
-
-    // Do something with the found parcels and calculated values
-    //console.log("Profit of the day: " + profitOfTheDay);
-    //console.log("foundCollectedParcels: " + foundCollectedParcels);
-
-    res.status(200).json({
-      foundCollectedParcels,
-      foundAddedParcel,
-      profitOfTheDay,
-      formattedDate,
-    });
+    return res.status(200).json(results);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

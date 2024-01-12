@@ -8,28 +8,31 @@ const { User, Staff } = require("../middleware/schemamodel");
 const { db } = require("../middleware/setupdb");
 
 router.get("/", async (req, res) => {
-  // Check if there's a user in the session
-  if (req.session.staff) {
-    if (req.session.staff.isAdmin) {
-      return res.redirect("/manageStaff");
-    }
-    const staffid = req.session.staff.staffId;
-    const staffList = await Staff.findOne({ staffId: staffid });
+  const { staff, user } = req.session;
+  if (staff && staff.isAdmin) {
+    return res.redirect("/manageStaff");
+  }
 
+  if (staff) {
+    const staffid = staff.staffId;
+    const staffList = await Staff.findOne({ staffId: staffid });
     if (staffList.pricing && staffList.pricing.length > 0) {
-      const lockerData = staffList.locker;
-      
-      return res.render("staff/indexstaff", { staffData: staffList, lockerData: lockerData.length });
+      return res.render("staff/indexstaff", { staffData: staffList });
     }
     return res.redirect("/staffsetting");
-  } else if (req.session.user) {
-    const username = req.session.user.username;
-    const userList = await User.findOne({ username: username });
-    return res.render("student/indexstudent", { userData: userList });
-  } else {
-    // If the session is empty, render the page without staffData
-    return res.render("guest/indexguest");
   }
+
+  if (user) {
+    const username = user.username;
+    const userList = await User.findOne({ username: username });
+    const messages = req.flash();
+    return res.render("student/indexstudent", {
+      userData: userList,
+      messages: messages,
+    });
+  }
+
+  return res.render("guest/indexguest");
 });
 
 module.exports = router;

@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", function (req, res) {
-  // destroy the user's session to log them out
-  // will be re-created next request
-  req.session.destroy(function () {
-    res.redirect("/");
-  });
-  console.log("\nUser logged out");
+router.get("/", (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error logging out:', err);
+            return res.status(500).send('Error logging out');
+        }
+
+        console.log('User logged out');
+        res.redirect('/');
+    });
 });
 
 

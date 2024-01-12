@@ -1,6 +1,6 @@
 const app = require("./app");
 const flash = require("express-flash");
-const port = 3000;
+const port = 3001;
 
 //listen to port
 app.listen(port, () => {
@@ -42,6 +42,15 @@ const deleteRecordsRoute = require("./routes/admin/deleteRecords");
 const editUserRoute = require("./routes/admin/editUser");
 const resetUserPasswordRoute = require("./routes/admin/resetUserPassword");
 const deleteUserRecordsRoute = require("./routes/admin/deleteUserRecords");
+const admindiscountRoute = require("./routes/admin/discount");
+const deletediscountRoute = require("./routes/admin/deletediscount");
+
+// student routes
+const studentsettingRoute = require("./routes/student/studentsetting");
+const studentUploadPictureRoute = require("./routes/student/studentUploadPicture");
+const studentGeneralSettingRoute = require("./routes/student/studentGeneralSetting");
+const studentPasswordSettingRoute = require("./routes/student/studentPasswordSetting");
+const studentApplyCouponRoute = require("./routes/student/applyCoupon");
 
 //logout
 const logoutRoute = require("./routes/logout");
@@ -80,10 +89,18 @@ app.use("/deleteRecords", deleteRecordsRoute);
 app.use("/editUser", editUserRoute);
 app.use("/resetUserPassword", resetUserPasswordRoute);
 app.use("/deleteUserRecords", deleteUserRecordsRoute);
+app.use("/discount", admindiscountRoute);
+app.use("/deletediscount", deletediscountRoute);
+
+// student routes
+app.use("/studentsetting", studentsettingRoute);
+app.use("/studentUploadPicture", studentUploadPictureRoute);
+app.use("/studentGeneralSetting", studentGeneralSettingRoute);
+app.use("/studentPasswordSetting", studentPasswordSettingRoute);
+app.use("/applyCoupon", studentApplyCouponRoute);
 
 //logout
 app.use("/logout", logoutRoute);
-
 
 // error 404
 app.get("*", function (req, res) {

@@ -34,7 +34,7 @@ router.post("/", express.urlencoded({ extended: true }), async (req, res) => {
       filter = guestparcel.locker
       .filter((locker) => locker.parcel?.tracking === guestSearch)
       .map((locker) => {
-          const formattedDateAdded = moment(locker.parcel.dateAdded).format('DD MMM YYYY');
+          const formattedDateAdded = moment(locker.parcel.dateAdded,"DD/MM/YYYY").format('D MMM YYYY');
           return {
               ...locker.parcel,
               dateAdded: formattedDateAdded

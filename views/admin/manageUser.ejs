@@ -1,7 +1,12 @@
 <% if ( session.staff ){ %>
 <!-- include header-->
     <%- include('../include/header') %>
-
+    <title>Manage User</title>
+    <style>
+        th {
+            font-weight: 400;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const rowsPerPage = 25;  // Example: 5 rows per page

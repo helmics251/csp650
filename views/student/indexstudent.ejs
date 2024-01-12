@@ -1,0 +1,67 @@
+<!-- include header -->
+    <%- include('../include/header') %>
+    <title>Home</title>
+    <style>
+        th {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<!-- end header -->
+<body>
+<!-- include navbar-->
+    <%- include('../student/studentnavbar') %>
+<!-- end navbar-->
+<main>
+<% if (messages.alert) { %>
+    <script>
+        alert("<%= messages.alert %>");
+    </script>
+<% } %>
+<section>
+    <div class="container mt-5 text-center">
+        <% if ( userData.Parcel && userData.Parcel.length > 0 ){ %>
+            <h3>Your Parcels That Are Ready To Be Collected</h3>
+            <div class="mt-4 d-flex justify-content-end">
+                <form action="/applyCoupon" method="post">
+                    <div class="input-group" style="max-width: 350px;">
+                        <input type="text" id="discountCode" name="discountCode" placeholder="Enter Discount Coupon" class="form-control">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table class="table mt-2">
+                <thead class="blue text-white">
+                    <tr>
+                        <th>No.</th>
+                        <th>Tracking Number</th>
+                        <th>Student Number</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <% let counter = 1; %>
+                <% userData.Parcel.forEach(parcel => { %>
+                    <tr>
+                        <td><%= counter %></td>
+                        <td><%= parcel.tracking %></td>
+                        <td><%= parcel.studentNumber %></td>
+                        <td><%= parcel.name %></td>
+                        <td>RM <%= parcel.price %></td>
+                    </tr>
+                    <% counter++; %>
+                <% }); %>
+            </table>
+        <% } else {%>
+            <img src="/style/logo.svg" alt="Description of image" width="200" height="200">
+            <h2 class="mt-2">Welcome <%= session.user.username.charAt(0).toUpperCase() + session.user.username.slice(1) %></h2>
+            <p>Currently, there are no parcels for you to collect</p>
+        <% } %>
+    </div>
+</section>
+</main>
+<!-- include footer-->
+    <%- include('../include/_footer') %>
+<!-- end footer-->

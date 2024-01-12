@@ -1,0 +1,264 @@
+<!-- include header -->
+    <%- include('../include/header') %>
+    <title>Settings</title>
+    <style>
+    .card-title {
+      font-weight: 400;
+    }
+    .list-group-item.list-group-item-action.active {
+      background-color: transparent; 
+      color: inherit; 
+      border: none; 
+    }
+
+    .list-group-item.list-group-item-action {
+      position: relative;
+      border: none;
+      transition: background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      display: flex; 
+      align-items: center; 
+    }
+
+    .list-group-item.list-group-item-action.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%; 
+      transform: translateY(-50%); 
+      width: 4px;
+      height: 35px; 
+      background-color: #3498db; 
+      transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    
+    .list-group-item.list-group-item-action:hover {
+      background-color: #eeeeee; 
+    }
+    .custom-gradient {
+      border: none;
+      outline: none;
+    }
+
+    .custom-table th, .custom-table td {
+      border: none;
+    }
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.6rem;
+      padding-top: 0.6rem;
+      transition: background-color 0.3s;
+    }
+
+    
+    .detail-label {
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      color: #555;
+      display: flex;
+    }
+    .detail-value {
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      color: #555;
+      display: flex;
+    }
+
+    .detail-value {
+      color: #444;
+    }
+  </style>
+</head>
+<!-- end header -->
+<body>
+<!-- include navbar-->
+        <%- include('../student/studentnavbar') %>
+<!-- end navbar-->
+<main>
+<% if (messages.alert) { %>
+    <script>
+        alert("<%= messages.alert %>");
+    </script>
+<% } %>
+<div class="container mt-5 mb-5">
+    <!-- <h1 class="h3 mb-3 ml-2">Settings</h1> -->
+    <div class="row">
+        <div class="col-md-5 col-xl-4">
+
+            <div class="card sticky-top">
+                <div class="card-header blue">
+                    <h5 class="card-title mb-0 text-white">Student Settings</h5>
+                </div>
+
+                <div class="list-group list-group-flush" role="tablist">
+                    <a class="list-group-item list-group-item-action active" data-toggle="list" href="#upload" role="tab">
+                        Picture
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-toggle="list" href="#general" role="tab">
+                        General
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-toggle="list" href="#password" role="tab">
+                        Password
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 col-xl-8">
+            <div class="tab-content">
+                <!-- upload setting -->
+                <div class="tab-pane fade show active" id="upload" role="tabpanel">
+
+                <div class="card">
+                    <div class="card-header blue">
+                        <h5 class="card-title mb-0 text-white">Upload Picture</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/studentUploadPicture" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group mt-3">
+                                        <label for="student-upload-profile-picture">Upload New Profile Picture:</label>
+                                        <div class="input-group custom-file mb-3 mt-2">
+                                            <input type="file" class="custom-file-input" id="student-upload-profile-picture" name="student-upload-profile-picture" accept="image/*">
+                                            <label class="custom-file-label" for="student-upload-profile-picture">Choose Picture</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <img src="/upload/student/<%= studentData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn blue">Upload Picture</button>
+                        </form>
+
+                    </div>
+                </div>
+
+                
+
+                </div>
+                <!-- general setting -->
+                <div class="tab-pane fade" id="general" role="tabpanel">
+
+                <div class="card">
+                    <div class="card-header blue">
+                        <h5 class="card-title mb-0 text-white">General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/studentGeneralSetting" method="post">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group ">
+                                        <label for="username" class="form-label">Username: </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text blue"><i class="fas fa-user text-white"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control " name="username" placeholder="New Username" id="username" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label for="email" class="form-label">Email:</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text blue"><i class="fas fa-envelope text-white"></i></span>
+                                            </div>
+                                            <input type="email" class="form-control" id="email" placeholder="New Email" name="email" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <img src="/upload/student/<%= studentData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn blue mt-3">Save Changes</button>
+                        </form>
+
+                    </div>
+                </div>
+
+                
+
+                </div>
+                <!-- password setting -->
+                <div class="tab-pane fade" id="password" role="tabpanel">
+
+                <div class="card">
+                    <div class="card-header blue">
+                        <h5 class="card-title mb-0 text-white">Password Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/studentPasswordSetting" method="post">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group ">
+                                        <label for="currentpassword">Current Password:</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></span>
+                                            </div>
+                                            <input type="password" class="form-control" id="currentpassword" placeholder="Enter your current password" name="currentpassword" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label for="newpassword">New Password:</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></span>
+                                            </div>
+                                            <input type="password" class="form-control" id="newpassword" placeholder="Enter your new password" name="newpassword" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label for="confirmnewpassword">Confirm New Password:</label>
+                                    <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text blue"><i class="fas fa-lock text-white"></i></span>
+                                            </div>
+                                            <input type="password" class="form-control" id="confirmnewpassword" placeholder="Confirm your new password" name="confirmnewpassword" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <img src="/upload/student/<%= studentData.profilePictureName || 'placeholder.png' %>" class="rounded-circle img-responsive mt-2" width="128" height="128" alt="Profile Picture">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn blue mt-3">Change Password</button>
+                        </form>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+<script>
+$(document).ready(function () {
+  $("[href='/studentsetting']").addClass("active");
+});
+</script>
+<script>
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
+<!-- include footer-->
+        <%- include('../include/_footer') %>
+<!-- end footer-->

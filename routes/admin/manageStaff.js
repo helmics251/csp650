@@ -12,9 +12,12 @@ router.get(
   async function (req, res) {
     if (req.session.staff && req.session.staff.isAdmin) {
       const staffList = await Staff.find({ isAdmin: false });
+      const messages = req.flash();
 
-      return res.render("admin/manageStaff", { staffData: staffList });
-
+      return res.render("admin/manageStaff", {
+        staffData: staffList,
+        messages: messages,
+      });
     }
     return res.render("guest/error404");
   }

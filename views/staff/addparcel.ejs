@@ -1,6 +1,8 @@
 <% if ( session.staff ){ %>
     <!-- include header -->
         <%- include('../include/header') %>
+        <title>Add Parcel</title>
+        <script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
         <style>
             /* Hide the default radio input */
             input[type="radio"] {
@@ -62,7 +64,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text red"><i class="fas fa-user text-white"></i></span>
                                             </div>
-                                            <input type="text" class="form-control " name="name" placeholder="Receiver Name" id="name" autocomplete="on" required >
+                                            <input type="text" class="form-control" name="name" placeholder="Receiver Name" id="name" autocomplete="on" maxlength="38" required >
                                         </div>
                                     </div>
 
@@ -122,10 +124,10 @@
                                         <label for="parceltype" class="form-label ">Parcel Type:</label>
                                         <div class="mb-1">
                                             <div class="radio-group">
-                                                <input type="radio" class="form-control" id="fragile" name="parceltype" value="Fragile">
+                                                <input type="radio" class="form-control" id="fragile" name="parceltype" value="Fragile" required>
                                                 <label for="fragile" class="mr-3"><i class="fas fa-glass-martini mr-2"></i>Fragile</label>
         
-                                                <input type="radio" class="form-control" id="nonfragile" name="parceltype" value="Non-Fragile">
+                                                <input type="radio" class="form-control" id="nonfragile" name="parceltype" value="Non-Fragile" required>
                                                 <label for="nonfragile"><i class="fas fa-box mr-2"></i>Non-Fragile</label>
                                             </div>
                                         </div>
@@ -149,7 +151,10 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text red"><i class="fas fa-qrcode text-white"></i></span>
                                             </div>
-                                            <input type="text"  class="form-control " name="tracking" placeholder="Tracking Number" id="tracking" required>
+                                            <input type="text"  class="form-control " name="tracking" placeholder="Tracking Number" id="tracking" maxlength="30" required>
+                                            <div class="input-group-append">
+                                              <button class="btn red" type="button" data-toggle="modal" data-target="#qrModal">Scan QR</button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -161,7 +166,58 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="qrModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Scan QR Code</h4>
+                <button type="button" class="close" id="closemark" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                <video id="preview" width="100%"></video>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeModalBtn" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </main>
+    <script>
+      $(document).ready(function() {
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        
+        scanner.addListener('scan', function(content) {
+          setTimeout(function() {
+            $("#tracking").val(content);
+            scanner.stop();
+            $('#qrModal').modal('hide');
+          }, 500);
+        });
+
+        
+        $('#qrModal').on('shown.bs.modal', function() {
+          Instascan.Camera.getCameras().then(function(cameras) {
+            if (cameras.length > 0) {
+              if ($(window).width() > 768) {
+                scanner.start(cameras[0]);
+              } else {
+                scanner.start(cameras[1]);
+              }
+            } else {
+              alert("No cameras found.");
+              console.error('No cameras found.');
+            }
+          }).catch(function(e) {
+            console.error(e);
+          });
+        });
+
+        $('#qrModal').on('hide.bs.modal', function() {
+          scanner.stop();
+        });
+      });
+    </script>
     <script>
         $(document).ready(function() {
             $('#studentNumber,#parcelWeight').on('keydown', function(event) {

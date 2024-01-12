@@ -8,17 +8,12 @@ const { db } = require("../../middleware/setupdb");
 
 router.post("/", async function (req, res) {
     try {
-        // Get user input
-        const STAFFID = req.body.STAFFID;
-
-        // Delete record from the "Staff" collection
-        await Staff.deleteOne({ staffId: STAFFID });
-
-        // Log successful deletion
-        console.log(`Record with staffId ${STAFFID} deleted successfully`);
-
-        // Redirect after successful delete record
-        res.redirect("/manageStaff");
+        const {discountCode} = req.body;
+        console.log("🚀 ~ discountCode:", discountCode)
+        
+        const result = await db.collection("discounts").deleteOne({discountCode});
+        console.log("🚀 ~ result:", result)
+        return res.redirect("/discount");
     } catch (error) {
         // Handle errors appropriately
         console.error("Error:", error);
